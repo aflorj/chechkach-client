@@ -1,8 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import Landing from './components/Landing/LandingBB';
+import Landing from './components/Landing/Landing';
 import Lobbies from './components/Lobbies/Lobbies';
 import Lobby from './components/Lobby/Lobby';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 function App() {
   const [stateUsername, setStateUsername] = useState<undefined | string>(

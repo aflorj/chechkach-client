@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
-import Socket from '../utils/Socket';
+import { createContext, useEffect, useState } from 'react';
 import { waitFor } from '../utils';
-import { GameContextProps, GameContext } from './GameProvider';
+import { socket } from '../socket';
 
 type BoardEvent = React.MouseEvent<HTMLCanvasElement, MouseEvent>;
 type PickerEvent = React.ChangeEvent<HTMLInputElement>;
+
+export interface Line {
+  x: number;
+  y: number;
+  color: string;
+  brushSize: number;
+  isEnding: boolean;
+}
 
 export interface DrawingBoardContextProps {
   isDrawing: boolean;
@@ -18,37 +25,39 @@ export interface DrawingBoardContextProps {
   handleColorChange: (ev: PickerEvent) => void;
   brushSize: number;
   handleBrushSizeChange: (ev: PickerEvent) => void;
-}
-export interface Line {
-  x: number;
-  y: number;
-  color: string;
-  brushSize: number;
-  isEnding: boolean;
+  setLobbyName: (lobbyName: string) => void;
 }
 
-export const DrawingBoardContext = React.createContext<
+export const DrawingBoardContext = createContext<
   Partial<DrawingBoardContextProps>
 >({});
 
-const DrawingBoardProvider: React.FC = (props) => {
-  const context = React.useContext(GameContext) as GameContextProps;
-  const [isDrawing, setIsDrawing] = React.useState(false);
-  const [ctx, setCtx] = React.useState<CanvasRenderingContext2D>();
+interface DBPProps {
+  children: React.ReactNode;
+}
+
+const DrawingBoardProvider = (props: DBPProps) => {
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
   const [color, setColor] = useState('#000000');
   const [brushSize, setBrushSize] = useState(10);
-  const socket = Socket.getSocket();
-  React.useEffect(() => {
+  const [lobbyName, setLobbyName] = useState<string>();
+
+  useEffect(() => {
+    console.log('bum');
     if (ctx) {
-      socket.on('lineDraw', (line: Line) => {
-        drawLine(line);
+      socket.on('newLine', ({ newLine }) => {
+        console.log('new line to draw: ', newLine);
+        drawLine(newLine);
       });
+
       socket.on('drawingState', async (lines: Line[]) => {
         for (const line of lines) {
           drawLine(line);
           await waitFor(5);
         }
       });
+
       socket.on('roundStart', () => {
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       });
@@ -69,7 +78,7 @@ const DrawingBoardProvider: React.FC = (props) => {
   };
 
   const draw = (ev: BoardEvent, isEnding = false) => {
-    if (!ctx || !isDrawing || !context.drawingPermission) {
+    if (!ctx || !isDrawing) {
       return;
     }
     const newLine = {
@@ -80,8 +89,12 @@ const DrawingBoardProvider: React.FC = (props) => {
       isEnding,
     };
     drawLine(newLine);
-    socket.emit('lineDraw', newLine);
+    socket.emit('draw', {
+      newLine: newLine,
+      lobbyName: lobbyName,
+    });
   };
+
   const handleMouseMove = (ev: BoardEvent): void => {
     draw(ev);
   };
@@ -99,6 +112,7 @@ const DrawingBoardProvider: React.FC = (props) => {
   const handleBrushSizeChange = (ev: PickerEvent): void => {
     setBrushSize(parseInt(ev.target.value));
   };
+
   return (
     <DrawingBoardContext.Provider
       value={{
@@ -113,6 +127,7 @@ const DrawingBoardProvider: React.FC = (props) => {
         brushSize,
         handleBrushSizeChange,
         handleColorChange,
+        setLobbyName,
       }}
     >
       {props.children}

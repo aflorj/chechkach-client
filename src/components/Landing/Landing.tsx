@@ -1,83 +1,28 @@
-import {
-  useContext,
-  useRef,
-  useState,
-  useEffect,
-  useLayoutEffect,
-} from 'react';
 import { Link } from 'react-router-dom';
 
 interface ILandingProps {
   stateUsername: string | undefined;
   setStateUsername: (username: string) => void;
 }
-export default function Landing() {
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
-  const [color, setColor] = useState('red');
-  const [brushSize, setBrushSize] = useState(10);
-
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  const draw = (ev: any, isEnding = false) => {
-    if (!ctx || !isDrawing || false) {
-      return;
-    }
-    const newLine = {
-      x: ev.clientX - ctx.canvas.offsetLeft,
-      y: ev.clientY - ctx.canvas.offsetTop,
-      color,
-      brushSize,
-      isEnding,
-    };
-    drawLine(newLine);
-    // socket.emit('lineDraw', newLine);
-  };
-
-  const drawLine = (line: any) => {
-    if (!ctx) {
-      return;
-    }
-    ctx.strokeStyle = line.color;
-    ctx.lineWidth = line.brushSize;
-    ctx.lineTo(line.x, line.y);
-    ctx.stroke();
-    if (line.isEnding) {
-      ctx.beginPath();
-    }
-  };
-
-  const handleMouseMove = (ev: any): void => {
-    draw(ev);
-  };
-  const handleMouseDown = (ev: any): void => {
-    setIsDrawing(true);
-    draw(ev);
-  };
-  const handleMouseUp = (ev: any): void => {
-    draw(ev, true);
-    setIsDrawing(false);
-  };
-
-  useLayoutEffect(() => {
-    const canvas = canvasRef.current as HTMLCanvasElement;
-    canvas.height = 400;
-    canvas.width = 400;
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx.lineWidth = brushSize;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    setCtx(ctx);
-  });
-
+export default function Landing({
+  stateUsername,
+  setStateUsername,
+}: ILandingProps) {
   return (
     <div className="h-screen">
-      <canvas
-        ref={canvasRef}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
-      ></canvas>
+      <div className="p-4 mt-8 md:w-1/2 bg-gray-300 mx-auto">
+        <div className="flex mb-2">
+          <div>Username:</div>
+          <input
+            className="shadow appearance-none border rounded ms-2"
+            value={stateUsername}
+            onChange={(e) => setStateUsername(e?.target?.value)}
+          />
+        </div>
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <Link to="/lobbies">Chek lobbies</Link>
+        </button>
+      </div>
     </div>
   );
 }
