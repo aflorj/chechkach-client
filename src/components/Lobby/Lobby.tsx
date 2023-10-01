@@ -16,7 +16,8 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
   const { lobbyName } = useParams();
 
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [isReady, setIsReady] = useState(false);
+  const [isStartingGame, setIsStartingGame] = useState(false);
+  // const [isReady, setIsReady] = useState(false); we don't track player's ready status anymore
   const [messageHistory, setMessageHistory] = useState<any>([]);
   const [msg, setMsg] = useState('');
 
@@ -26,6 +27,14 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
       lobbyName: lobbyName,
       messageType: 'chat',
       messageContent: msg,
+    });
+  };
+
+  const startGame = () => {
+    console.log('start game button click');
+    socket.emit('startGame', {
+      lobbyName: lobbyName,
+      userName: stateUsername,
     });
   };
 
@@ -88,14 +97,14 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
       });
   };
 
-  const toggleReady = () => {
-    socket.emit('ready_change', {
-      userName: stateUsername,
-      lobbyName: lobbyName,
-      isReady: !isReady,
-    });
-    setIsReady(!isReady);
-  };
+  // const toggleReady = () => {
+  //   socket.emit('ready_change', {
+  //     userName: stateUsername,
+  //     lobbyName: lobbyName,
+  //     isReady: !isReady,
+  //   });
+  //   setIsReady(!isReady);
+  // };
 
   useEffect(() => {
     console.log('msg history: ', messageHistory);
@@ -115,60 +124,70 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
     console.log('lobby info je: ', lobbyInfo);
   }, [lobbyInfo]);
 
-  // if (lobbyInfo?.status === 'playing') {
+  if (lobbyInfo?.status === 'playing') {
+    return (
+      <DrawingBoardProvider>
+        <MagicCanvas lobbyName={lobbyInfo?.name} />
+      </DrawingBoardProvider>
+    );
+  }
   return (
-    <DrawingBoardProvider>
-      <MagicCanvas lobbyName={lobbyInfo?.name} />
-    </DrawingBoardProvider>
+    <div className="h-screen pt-8">
+      <div className="bg-purple-100 md:w-1/2 mx-auto p-4">
+        <div className="text-3xl flex justify-between">
+          <div>
+            {lobbyInfo?.name} ({lobbyInfo?.status})
+          </div>
+          {stateUsername ===
+            lobbyInfo?.players?.filter((player: any) => player.isOwner)?.[0]
+              ?.playerId && (
+            <button
+              disabled={lobbyInfo?.players?.length < 2 || isStartingGame}
+              onClick={() => startGame()}
+            >
+              start
+            </button>
+          )}
+        </div>
+        <div className="bg-purple-50 rounded-md mt-4">
+          {lobbyInfo?.players?.map((player: any) => (
+            <div
+              className={`${player?.ready ? 'bg-green-200' : 'bg-gray-200'}`}
+            >
+              {player?.playerId} {player?.isOwner && <>♛</>}
+            </div>
+          ))}
+        </div>
+        <div>
+          {isConnected ? 'connected' : 'not connected'}{' '}
+          <button onClick={() => socket.connect()}>connect</button>
+          <button onClick={() => socket.disconnect()}>disconnect</button>
+          {/* <button
+            onClick={() => toggleReady()}
+            disabled={lobbyInfo?.status === 'playing'}
+          >
+            Ready {isReady ? '!' : '?'}
+          </button> */}
+        </div>
+        <br />
+        <div>
+          <div>
+            <input value={msg} onChange={(e) => setMsg(e?.target?.value)} />
+            <button onClick={() => sendMessage()}>send</button>
+          </div>
+          <div>messages:</div>
+          <div>
+            {messageHistory?.length > 0 &&
+              messageHistory?.map((msgObj: any) => (
+                <div>
+                  {msgObj?.userName}
+                  {': '}
+                  {msgObj?.message?.content}
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
-  // }
-  // return (
-  //   <div className="h-screen pt-8">
-  //     <div className="bg-purple-100 md:w-1/2 mx-auto p-4">
-  //       <div className="text-3xl">
-  //         {lobbyInfo?.name} ({lobbyInfo?.status})
-  //       </div>
-  //       <div className="bg-purple-50 rounded-md mt-4">
-  //         {lobbyInfo?.players?.map((player: any) => (
-  //           <div
-  //             className={`${player?.ready ? 'bg-green-200' : 'bg-gray-200'}`}
-  //           >
-  //             {player?.playerId} (
-  //             {player?.connected ? 'connected' : 'not connected'}) (
-  //             {player?.ready ? 'ready' : 'not ready'})
-  //           </div>
-  //         ))}
-  //       </div>
-  //       <div>
-  //         {isConnected ? 'connected' : 'not connected'}{' '}
-  //         <button onClick={() => socket.connect()}>connect</button>
-  //         <button onClick={() => socket.disconnect()}>disconnect</button>
-  //         <button
-  //           onClick={() => toggleReady()}
-  //           disabled={lobbyInfo?.status === 'playing'}
-  //         >
-  //           Ready {isReady ? '!' : '?'}
-  //         </button>
-  //       </div>
-  //       <br />
-  //       <div>
-  //         <div>
-  //           <input value={msg} onChange={(e) => setMsg(e?.target?.value)} />
-  //           <button onClick={() => sendMessage()}>send</button>
-  //         </div>
-  //         <div>messages:</div>
-  //         <div>
-  //           {messageHistory?.length > 0 &&
-  //             messageHistory?.map((msgObj: any) => (
-  //               <div>
-  //                 {msgObj?.userName}
-  //                 {': '}
-  //                 {msgObj?.message?.content}
-  //               </div>
-  //             ))}
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
 }
