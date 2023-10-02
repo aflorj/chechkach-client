@@ -19,9 +19,11 @@ export default function Landing({
             onChange={(e) => setStateUsername(e?.target?.value)}
           />
         </div>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          <Link to="/lobbies">Chek lobbies</Link>
-        </button>
+        <Link to="/lobbies">
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Check lobbies
+          </button>
+        </Link>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { socket } from '../../socket';
 import axios from 'axios';
 import DrawingBoardProvider from '../../providers/DrawingBoardProvider';
 import MagicCanvas from '../MagicCanvas/MagicCanvas';
+import WordPicker from '../WordPicker/WordPicker';
 
 interface ILobbyProps {
   stateUsername: string | undefined;
@@ -63,21 +64,31 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
       setMessageHistory((prevState: any) => [...prevState, msgObj]);
     }
 
+    // too general... replace with multiple specific events
     function onLobbyUpdate({ newLobbyState }: any) {
       console.log('new lobby state: ', newLobbyState);
       setLobbyInfo(newLobbyState);
+    }
+
+    function onPickAWord({ arrayOfWordOptions }: any) {
+      console.log('pick one of these to draw: ', ...arrayOfWordOptions);
+
+      // TODO set options and display word picker
     }
 
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('message', onMessage);
     socket.on('lobbyUpdate', onLobbyUpdate);
+    socket.on('pickAWord', onPickAWord);
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
       socket.off('message', onMessage);
       socket.off('lobbyUpdate', onLobbyUpdate);
+      socket.off('pickAWord', onPickAWord);
+
       //   socket.disconnect();
     };
   }, []);
@@ -124,9 +135,10 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
     console.log('lobby info je: ', lobbyInfo);
   }, [lobbyInfo]);
 
-  if (lobbyInfo?.status === 'playing') {
+  if (lobbyInfo?.status !== 'open') {
     return (
       <DrawingBoardProvider>
+        <WordPicker />
         <MagicCanvas lobbyName={lobbyInfo?.name} />
       </DrawingBoardProvider>
     );
