@@ -1,16 +1,19 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router';
 import { socket } from '../../socket';
 import axios from 'axios';
 import DrawingBoardProvider from '../../providers/DrawingBoardProvider';
 import MagicCanvas from '../MagicCanvas/MagicCanvas';
 import WordPicker from '../WordPicker/WordPicker';
+import { LobbyContext } from '../../providers/LobbyProvider';
+import InfoBar from '../InfoBar/InfoBar';
 
 interface ILobbyProps {
   stateUsername: string | undefined;
 }
 
 export default function Lobby({ stateUsername }: ILobbyProps) {
+  const context = useContext(LobbyContext);
   const { state } = useLocation();
 
   const [lobbyInfo, setLobbyInfo] = useState<any>();
@@ -70,24 +73,16 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
       setLobbyInfo(newLobbyState);
     }
 
-    function onPickAWord({ arrayOfWordOptions }: any) {
-      console.log('pick one of these to draw: ', ...arrayOfWordOptions);
-
-      // TODO set options and display word picker
-    }
-
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('message', onMessage);
     socket.on('lobbyUpdate', onLobbyUpdate);
-    socket.on('pickAWord', onPickAWord);
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
       socket.off('message', onMessage);
       socket.off('lobbyUpdate', onLobbyUpdate);
-      socket.off('pickAWord', onPickAWord);
 
       //   socket.disconnect();
     };
@@ -131,14 +126,11 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
     }
   }, []);
 
-  useEffect(() => {
-    console.log('lobby info je: ', lobbyInfo);
-  }, [lobbyInfo]);
-
-  if (lobbyInfo?.status !== 'open') {
+  if (context?.lobbyStatus === ('pickingWord' || 'guessing' || 'endgame')) {
     return (
       <DrawingBoardProvider>
-        <WordPicker />
+        {context?.wordOptions && <WordPicker lobbyName={lobbyInfo?.name} />}
+        <InfoBar />
         <MagicCanvas lobbyName={lobbyInfo?.name} />
       </DrawingBoardProvider>
     );
@@ -148,13 +140,13 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
       <div className="bg-purple-100 md:w-1/2 mx-auto p-4">
         <div className="text-3xl flex justify-between">
           <div>
-            {lobbyInfo?.name} ({lobbyInfo?.status})
+            {lobbyInfo?.name} ({context?.lobbyStatus})
           </div>
           {stateUsername ===
-            lobbyInfo?.players?.filter((player: any) => player.isOwner)?.[0]
+            context?.users?.filter((player: any) => player.isOwner)?.[0]
               ?.playerId && (
             <button
-              disabled={lobbyInfo?.players?.length < 2 || isStartingGame}
+              disabled={context?.users?.length < 2 || isStartingGame}
               onClick={() => startGame()}
             >
               start
@@ -162,11 +154,9 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
           )}
         </div>
         <div className="bg-purple-50 rounded-md mt-4">
-          {lobbyInfo?.players?.map((player: any) => (
-            <div
-              className={`${player?.ready ? 'bg-green-200' : 'bg-gray-200'}`}
-            >
-              {player?.playerId} {player?.isOwner && <>♛</>}
+          {context?.users?.map((user: any) => (
+            <div>
+              {user?.playerId} {user?.isOwner && <>♛</>}
             </div>
           ))}
         </div>
@@ -177,7 +167,7 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
           {/* <button
             onClick={() => toggleReady()}
             disabled={lobbyInfo?.status === 'playing'}
-          >
+            >
             Ready {isReady ? '!' : '?'}
           </button> */}
         </div>

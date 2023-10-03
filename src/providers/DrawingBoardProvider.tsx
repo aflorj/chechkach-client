@@ -1,6 +1,7 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { waitFor } from '../utils';
 import { socket } from '../socket';
+import { LobbyContext } from './LobbyProvider';
 
 type BoardEvent = React.MouseEvent<HTMLCanvasElement, MouseEvent>;
 type PickerEvent = React.ChangeEvent<HTMLInputElement>;
@@ -37,6 +38,7 @@ interface DBPProps {
 }
 
 const DrawingBoardProvider = (props: DBPProps) => {
+  const context = useContext(LobbyContext);
   const [isDrawing, setIsDrawing] = useState(false);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
   const [color, setColor] = useState('#000000');
@@ -44,7 +46,6 @@ const DrawingBoardProvider = (props: DBPProps) => {
   const [lobbyName, setLobbyName] = useState<string>();
 
   useEffect(() => {
-    console.log('bum');
     if (ctx) {
       socket.on('newLine', ({ newLine }) => {
         console.log('new line to draw: ', newLine);
@@ -78,7 +79,7 @@ const DrawingBoardProvider = (props: DBPProps) => {
   };
 
   const draw = (ev: BoardEvent, isEnding = false) => {
-    if (!ctx || !isDrawing) {
+    if (!ctx || !isDrawing || !context.allowedToDraw) {
       return;
     }
     const newLine = {

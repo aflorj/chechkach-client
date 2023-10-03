@@ -3,6 +3,7 @@ import Landing from './components/Landing/Landing';
 import Lobbies from './components/Lobbies/Lobbies';
 import Lobby from './components/Lobby/Lobby';
 import { useState } from 'react';
+import LobbyProvider from './providers/LobbyProvider';
 
 function App() {
   const [stateUsername, setStateUsername] = useState<undefined | string>(
@@ -29,7 +30,11 @@ function App() {
         />
         <Route
           path="/lobby/:lobbyName"
-          element={<Lobby stateUsername={stateUsername} />}
+          element={
+            <LobbyProvider>
+              <Lobby stateUsername={stateUsername} />
+            </LobbyProvider>
+          }
         />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
