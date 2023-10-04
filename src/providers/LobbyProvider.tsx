@@ -1,4 +1,10 @@
-import { createContext, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useEffect,
+  useState,
+} from 'react';
 import { socket } from '../socket';
 
 export type User = {
@@ -19,6 +25,9 @@ export interface LobbyContextProps {
   scoresThisRound: any;
   drawingUser: string;
   wordOptions: string[] | null;
+  wordToDraw: string | null;
+  stateUsername: string | null;
+  setStateUsername: Dispatch<SetStateAction<string | undefined>>;
 }
 
 export const LobbyContext = createContext<Partial<LobbyContextProps>>({});
@@ -33,38 +42,76 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
   const [users, setUsers] = useState<User[]>([]);
   const [maskedWord, setMaskedWord] = useState<string | null>(null);
   const [allowedToDraw, setAllowedToDraw] = useState(false);
-  const [lobbyStatus, setLobbyStatus] = useState(); // TODO probaby an enum
+  const [lobbyStatus, setLobbyStatus] = useState(); // TODO probably an enum
   const [scoresThisRound, setScoresThisRound] = useState();
   const [drawingUser, setDrawingUser] = useState();
   const [wordOptions, setWordOptions] = useState<string[] | null>(null);
+  const [wordToDraw, setWordToDraw] = useState<string | null>(null);
 
   useEffect(() => {
-    socket.on('lobbyStatusChange', ({ newStatus, info }) => {
-      console.log('new info about the lobby status: ', newStatus);
+    function onLobbyStatusChange({ newStatus, info }: any) {
+      //   console.log(
+      //     'new info about the lobby status: ',
+      //     newStatus,
+      //     ' and info: ',
+      //     info
+      //   );
 
       setLobbyStatus(newStatus);
 
       // switching to 'pickingWord' status
       if (newStatus === 'pickingWord') {
         // everyone gets notified of the drawing user
-        setDrawingUser(info?.drawingUser);
+        setDrawingUser(info?.drawingUser); // TODO display drawing user mark next to the drawing user in the user list component
+      } else if (newStatus === 'playing') {
+        setMaskedWord(info?.maskedWord);
         if (info?.drawingUser === stateUsername) {
           // if we are the drawing user we are now allowed to draw
           setAllowedToDraw(true);
         }
       }
-    });
+    }
 
-    socket.on('userStateChange', ({ newUserState }) => {
-      console.log('new info about the users: ', newUserState);
+    function onUserStateChange({ newUserState }: any) {
+      //   console.log('new info about the users: ', newUserState);
       setUsers(newUserState);
-    });
+    }
 
-    socket.on('pickAWord', ({ arrayOfWordOptions }) => {
-      console.log('i can choose from: ', ...arrayOfWordOptions);
+    function onPickAWord({ arrayOfWordOptions }: any) {
+      //   console.log('i can choose from: ', ...arrayOfWordOptions);
       setWordOptions(arrayOfWordOptions);
-    });
-  }, []);
+    }
+
+    function onStartDrawing({ wordToDraw }: any) {
+      //   console.log('i have to draw: ', wordToDraw);
+      setWordOptions(null);
+      setWordToDraw(wordToDraw);
+    }
+
+    socket.on('lobbyStatusChange', onLobbyStatusChange);
+    socket.on('userStateChange', onUserStateChange);
+    socket.on('pickAWord', onPickAWord);
+    socket.on('startDrawing', onStartDrawing);
+
+    return () => {
+      socket.off('lobbyStatusChange', onLobbyStatusChange);
+      socket.off('userStateChange', onUserStateChange);
+      socket.off('pickAWord', onPickAWord);
+      socket.off('startDrawing', onStartDrawing);
+    };
+  }, [stateUsername]);
+
+  //   useEffect(() => {
+  //     console.log('atd: ', allowedToDraw);
+  //   }, [allowedToDraw]);
+
+  useEffect(() => {
+    console.log('state username: ', stateUsername);
+  }, [stateUsername]);
+
+  useEffect(() => {
+    console.log('lobbyStatus: ', lobbyStatus);
+  }, [lobbyStatus]);
 
   return (
     <LobbyContext.Provider
@@ -76,6 +123,9 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
         scoresThisRound,
         drawingUser,
         wordOptions,
+        wordToDraw,
+        stateUsername,
+        setStateUsername,
       }}
     >
       {props.children}

@@ -8,11 +8,7 @@ import WordPicker from '../WordPicker/WordPicker';
 import { LobbyContext } from '../../providers/LobbyProvider';
 import InfoBar from '../InfoBar/InfoBar';
 
-interface ILobbyProps {
-  stateUsername: string | undefined;
-}
-
-export default function Lobby({ stateUsername }: ILobbyProps) {
+export default function Lobby() {
   const context = useContext(LobbyContext);
   const { state } = useLocation();
 
@@ -27,7 +23,7 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
 
   const sendMessage = () => {
     socket.send({
-      userName: stateUsername,
+      userName: context.stateUsername,
       lobbyName: lobbyName,
       messageType: 'chat',
       messageContent: msg,
@@ -38,7 +34,7 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
     console.log('start game button click');
     socket.emit('startGame', {
       lobbyName: lobbyName,
-      userName: stateUsername,
+      userName: context.stateUsername,
     });
   };
 
@@ -54,7 +50,7 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
       console.log('fire onconnect');
       socket.emit('join', {
         lobbyName: lobbyName,
-        userName: stateUsername,
+        userName: context.stateUsername,
       });
       setIsConnected(true);
     }
@@ -126,7 +122,11 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
     }
   }, []);
 
-  if (context?.lobbyStatus === ('pickingWord' || 'guessing' || 'endgame')) {
+  if (
+    context?.lobbyStatus === 'pickingWord' ||
+    context?.lobbyStatus === 'playing' ||
+    context?.lobbyStatus === 'endgame'
+  ) {
     return (
       <DrawingBoardProvider>
         {context?.wordOptions && <WordPicker lobbyName={lobbyInfo?.name} />}
@@ -142,7 +142,7 @@ export default function Lobby({ stateUsername }: ILobbyProps) {
           <div>
             {lobbyInfo?.name} ({context?.lobbyStatus})
           </div>
-          {stateUsername ===
+          {context.stateUsername ===
             context?.users?.filter((player: any) => player.isOwner)?.[0]
               ?.playerId && (
             <button

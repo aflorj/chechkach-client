@@ -1,14 +1,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Link } from 'react-router-dom';
 import LobbyCard from '../LobbyCard/LobbyCard';
 
-interface ILobbiesProps {
-  stateUsername: string | undefined;
-}
-
-export default function Lobbies({ stateUsername }: ILobbiesProps) {
+export default function Lobbies() {
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -79,7 +74,7 @@ export default function Lobbies({ stateUsername }: ILobbiesProps) {
           value={lobbyName}
           onChange={(e) => setLobbyName(e?.target?.value)}
         />
-        <button onClick={() => createLobby()}>Create slobby</button>
+        <button onClick={() => createLobby()}>Create lobby</button>
       </div>
     </div>
   );

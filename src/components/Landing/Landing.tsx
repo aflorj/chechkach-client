@@ -1,13 +1,10 @@
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { LobbyContext } from '../../providers/LobbyProvider';
 
-interface ILandingProps {
-  stateUsername: string | undefined;
-  setStateUsername: (username: string) => void;
-}
-export default function Landing({
-  stateUsername,
-  setStateUsername,
-}: ILandingProps) {
+export default function Landing() {
+  const context = useContext(LobbyContext);
+
   return (
     <div className="h-screen">
       <div className="p-4 mt-8 md:w-1/2 bg-gray-300 mx-auto">
@@ -15,8 +12,10 @@ export default function Landing({
           <div>Username:</div>
           <input
             className="shadow appearance-none border rounded ms-2"
-            value={stateUsername}
-            onChange={(e) => setStateUsername(e?.target?.value)}
+            value={context.stateUsername!}
+            onChange={(e) => {
+              context.setStateUsername!(e?.target?.value);
+            }}
           />
         </div>
         <Link to="/lobbies">

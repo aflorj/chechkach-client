@@ -9,7 +9,17 @@ export default function InfoBar() {
   const getInfoBarMessage = () => {
     switch (lobbyStatus) {
       case 'pickingWord':
-        return <p>{`${drawingUser} is choosing a word to draw`}</p>;
+        return (
+          <p>
+            {context.stateUsername === drawingUser
+              ? 'Choose a word to draw'
+              : `${drawingUser} is choosing a word to draw`}
+          </p>
+        );
+      case 'playing':
+        return context?.wordToDraw
+          ? `You are drawing ${context.wordToDraw}`
+          : context.maskedWord;
     }
   };
 
