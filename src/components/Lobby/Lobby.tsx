@@ -7,6 +7,8 @@ import MagicCanvas from '../MagicCanvas/MagicCanvas';
 import WordPicker from '../WordPicker/WordPicker';
 import { LobbyContext } from '../../providers/LobbyProvider';
 import InfoBar from '../InfoBar/InfoBar';
+import Chat from '../Chat/Chat';
+import PlayerList from '../PlayerList/PlayerList';
 
 export default function Lobby() {
   const context = useContext(LobbyContext);
@@ -18,7 +20,6 @@ export default function Lobby() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [isStartingGame, setIsStartingGame] = useState(false);
   // const [isReady, setIsReady] = useState(false); we don't track player's ready status anymore
-  const [messageHistory, setMessageHistory] = useState<any>([]);
   const [msg, setMsg] = useState('');
 
   const sendMessage = () => {
@@ -59,10 +60,6 @@ export default function Lobby() {
       setIsConnected(false);
     }
 
-    function onMessage(msgObj: any) {
-      setMessageHistory((prevState: any) => [...prevState, msgObj]);
-    }
-
     // too general... replace with multiple specific events
     function onLobbyUpdate({ newLobbyState }: any) {
       console.log('new lobby state: ', newLobbyState);
@@ -71,13 +68,11 @@ export default function Lobby() {
 
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
-    socket.on('message', onMessage);
     socket.on('lobbyUpdate', onLobbyUpdate);
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
-      socket.off('message', onMessage);
       socket.off('lobbyUpdate', onLobbyUpdate);
 
       //   socket.disconnect();
@@ -109,10 +104,6 @@ export default function Lobby() {
   // };
 
   useEffect(() => {
-    console.log('msg history: ', messageHistory);
-  }, [messageHistory]);
-
-  useEffect(() => {
     if (state) {
       // for users coming from lobbylist/lobbbbycard - not refreshing
       setLobbyInfo(state);
@@ -131,7 +122,11 @@ export default function Lobby() {
       <DrawingBoardProvider>
         {context?.wordOptions && <WordPicker lobbyName={lobbyInfo?.name} />}
         <InfoBar />
-        <MagicCanvas lobbyName={lobbyInfo?.name} />
+        <div className="flex">
+          <PlayerList />
+          <MagicCanvas lobbyName={lobbyInfo?.name} />
+          <Chat lobbyName={lobbyInfo?.name} />
+        </div>
       </DrawingBoardProvider>
     );
   }
@@ -179,8 +174,8 @@ export default function Lobby() {
           </div>
           <div>messages:</div>
           <div>
-            {messageHistory?.length > 0 &&
-              messageHistory?.map((msgObj: any) => (
+            {context?.messageHistory?.length > 0 &&
+              context?.messageHistory?.map((msgObj: any) => (
                 <div>
                   {msgObj?.userName}
                   {': '}

@@ -17,9 +17,27 @@ export default function InfoBar() {
           </p>
         );
       case 'playing':
-        return context?.wordToDraw
-          ? `You are drawing ${context.wordToDraw}`
-          : context.maskedWord;
+        return context?.wordToDraw ? (
+          `You are drawing ${context.wordToDraw}`
+        ) : (
+          <div className="flex">
+            {context?.maskedWord?.split(' ')?.map((word: string) => (
+              <>
+                <div className="flex">
+                  {word?.split('')?.map((char: string) => (
+                    <div className="me-1">{char}</div>
+                  ))}
+                </div>
+                <div
+                  className="me-2"
+                  style={{ verticalAlign: 'super', fontSize: '0.75rem' }}
+                >
+                  {word?.length}
+                </div>
+              </>
+            ))}
+          </div>
+        );
     }
   };
 

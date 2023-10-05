@@ -8,9 +8,10 @@ import {
 import { socket } from '../socket';
 
 export type User = {
-  id: string;
-  score: number;
-  username: string;
+  connected: boolean;
+  isOwner: boolean;
+  playerId: string;
+  socketId: string;
 };
 
 interface ILobbyProviderProps {
@@ -28,6 +29,7 @@ export interface LobbyContextProps {
   wordToDraw: string | null;
   stateUsername: string | null;
   setStateUsername: Dispatch<SetStateAction<string | undefined>>;
+  messageHistory: any;
 }
 
 export const LobbyContext = createContext<Partial<LobbyContextProps>>({});
@@ -47,15 +49,21 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
   const [drawingUser, setDrawingUser] = useState();
   const [wordOptions, setWordOptions] = useState<string[] | null>(null);
   const [wordToDraw, setWordToDraw] = useState<string | null>(null);
+  const [messageHistory, setMessageHistory] = useState<any>([]);
 
   useEffect(() => {
+    function onMessage(msgObj: any) {
+      console.log('to je prispelo: ', msgObj);
+      setMessageHistory((prevState: any) => [...prevState, msgObj]);
+    }
+
     function onLobbyStatusChange({ newStatus, info }: any) {
-      //   console.log(
-      //     'new info about the lobby status: ',
-      //     newStatus,
-      //     ' and info: ',
-      //     info
-      //   );
+      // console.log(
+      //   'new info about the lobby status: ',
+      //   newStatus,
+      //   ' and info: ',
+      //   info
+      // );
 
       setLobbyStatus(newStatus);
 
@@ -88,12 +96,14 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
       setWordToDraw(wordToDraw);
     }
 
+    socket.on('message', onMessage);
     socket.on('lobbyStatusChange', onLobbyStatusChange);
     socket.on('userStateChange', onUserStateChange);
     socket.on('pickAWord', onPickAWord);
     socket.on('startDrawing', onStartDrawing);
 
     return () => {
+      socket.off('message', onMessage);
       socket.off('lobbyStatusChange', onLobbyStatusChange);
       socket.off('userStateChange', onUserStateChange);
       socket.off('pickAWord', onPickAWord);
@@ -113,6 +123,10 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
     console.log('lobbyStatus: ', lobbyStatus);
   }, [lobbyStatus]);
 
+  useEffect(() => {
+    console.log('users: ', users);
+  }, [users]);
+
   return (
     <LobbyContext.Provider
       value={{
@@ -126,6 +140,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
         wordToDraw,
         stateUsername,
         setStateUsername,
+        messageHistory,
       }}
     >
       {props.children}

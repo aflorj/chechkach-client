@@ -27,6 +27,7 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
   return (
     <div>
       <canvas
+        className="border border-black"
         ref={canvasRef}
         onMouseDown={context.handleMouseDown}
         onMouseUp={context.handleMouseUp}
