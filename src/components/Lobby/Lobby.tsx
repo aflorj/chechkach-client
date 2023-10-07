@@ -9,6 +9,7 @@ import { LobbyContext } from '../../providers/LobbyProvider';
 import InfoBar from '../InfoBar/InfoBar';
 import Chat from '../Chat/Chat';
 import PlayerList from '../PlayerList/PlayerList';
+import Palette from '../Palette/Palette';
 
 export default function Lobby() {
   const context = useContext(LobbyContext);
@@ -124,7 +125,10 @@ export default function Lobby() {
         <InfoBar />
         <div className="flex">
           <PlayerList />
-          <MagicCanvas lobbyName={lobbyInfo?.name} />
+          <div className="flex flex-col">
+            <MagicCanvas lobbyName={lobbyInfo?.name} />
+            {context.allowedToDraw && <Palette />}
+          </div>
           <Chat lobbyName={lobbyInfo?.name} />
         </div>
       </DrawingBoardProvider>

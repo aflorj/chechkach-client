@@ -23,9 +23,9 @@ export interface DrawingBoardContextProps {
   ctx: CanvasRenderingContext2D;
   setCtx: (ctx: CanvasRenderingContext2D) => void;
   color: string;
-  handleColorChange: (ev: PickerEvent) => void;
+  handleColorChange: (newHexColor: string) => void;
   brushSize: number;
-  handleBrushSizeChange: (ev: PickerEvent) => void;
+  handleBrushSizeChange: (newSize: number) => void;
   setLobbyName: (lobbyName: string) => void;
 }
 
@@ -107,11 +107,11 @@ const DrawingBoardProvider = (props: DBPProps) => {
     draw(ev, true);
     setIsDrawing(false);
   };
-  const handleColorChange = (ev: PickerEvent): void => {
-    setColor(ev.target.value);
+  const handleColorChange = (newHexColor: string): void => {
+    setColor(newHexColor);
   };
-  const handleBrushSizeChange = (ev: PickerEvent): void => {
-    setBrushSize(parseInt(ev.target.value));
+  const handleBrushSizeChange = (newSize: number): void => {
+    setBrushSize(newSize);
   };
 
   return (
