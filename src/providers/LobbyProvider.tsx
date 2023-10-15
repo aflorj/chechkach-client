@@ -30,6 +30,7 @@ export interface LobbyContextProps {
   stateUsername: string | null;
   setStateUsername: Dispatch<SetStateAction<string | undefined>>;
   messageHistory: any;
+  roundWinners: string[];
 }
 
 export const LobbyContext = createContext<Partial<LobbyContextProps>>({});
@@ -42,6 +43,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
   // temporary
 
   const [users, setUsers] = useState<User[]>([]);
+  const [roundWinners, setRoundWinner] = useState<string[]>([]);
   const [maskedWord, setMaskedWord] = useState<string | null>(null);
   const [allowedToDraw, setAllowedToDraw] = useState(false);
   const [lobbyStatus, setLobbyStatus] = useState(); // TODO probably an enum
@@ -55,6 +57,8 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
     function onMessage(msgObj: any) {
       console.log('to je prispelo: ', msgObj);
       setMessageHistory((prevState: any) => [...prevState, msgObj]);
+
+      // if type === correctGuess dodamo userja v winners
     }
 
     function onLobbyStatusChange({ newStatus, info }: any) {
@@ -70,7 +74,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
       // switching to 'pickingWord' status
       if (newStatus === 'pickingWord') {
         // everyone gets notified of the drawing user
-        setDrawingUser(info?.drawingUser); // TODO display drawing user mark next to the drawing user in the user list component
+        setDrawingUser(info?.drawingUser);
       } else if (newStatus === 'playing') {
         setMaskedWord(info?.maskedWord);
         if (info?.drawingUser === stateUsername) {
@@ -86,7 +90,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
     }
 
     function onPickAWord({ arrayOfWordOptions }: any) {
-      //   console.log('i can choose from: ', ...arrayOfWordOptions);
+      console.log('i can choose from: ', ...arrayOfWordOptions);
       setWordOptions(arrayOfWordOptions);
     }
 
@@ -141,6 +145,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
         stateUsername,
         setStateUsername,
         messageHistory,
+        roundWinners,
       }}
     >
       {props.children}

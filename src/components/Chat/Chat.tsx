@@ -19,16 +19,44 @@ export default function Chat({ lobbyName }: any) {
     }
   };
 
+  const buildServerMessage = (msg: any) => {
+    if (msg.type === 'correctGuess') {
+      if (msg?.content === context.stateUsername) {
+        return <div className="text-green-600">You have guessed the word.</div>;
+      } else {
+        return (
+          <div className="text-green-600">
+            <b>{msg?.content}</b> guessed the word.
+          </div>
+        );
+      }
+    } else if (msg.type === 'playerJoiningOrLeaving') {
+      return <div className="text-yellow-400">{msg?.content}</div>;
+    }
+  };
+
   return (
     <div>
       {context?.messageHistory?.length > 0 &&
-        context?.messageHistory?.map((msgObj: any) => (
-          <div>
-            {msgObj?.userName}
-            {': '}
-            {msgObj?.message?.content}
-          </div>
-        ))}
+        context?.messageHistory?.map((msgObj: any) => {
+          if (msgObj.serverMessage) {
+            return <>{buildServerMessage(msgObj.message)}</>;
+          } else {
+            return (
+              <div
+                className={
+                  msgObj?.message?.type === 'winnersOnly'
+                    ? 'text-green-400'
+                    : ''
+                }
+              >
+                {msgObj?.userName}
+                {': '}
+                {msgObj?.message?.content}
+              </div>
+            );
+          }
+        })}
       <div>
         <input value={msg} onChange={(e) => setMsg(e?.target?.value)} />
         <button onClick={() => sendMessage()}>send</button>
