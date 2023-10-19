@@ -1,45 +1,79 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { LobbyContext } from '../../providers/LobbyProvider';
+import CountDown from '../CountDown/CountDown';
 
-export default function InfoBar() {
-  const context = useContext(LobbyContext);
-  const lobbyStatus = context?.lobbyStatus;
-  const drawingUser = context?.drawingUser;
+export default function InfoBar({
+  lobbyName,
+}: {
+  lobbyName: string | undefined;
+}) {
+  const {
+    lobbyStatus,
+    drawingUser,
+    maskedWord,
+    unmaskedWord,
+    stateUsername,
+    wordToDraw,
+    roundEndTimeStamp,
+  } = useContext(LobbyContext);
 
   const getInfoBarMessage = () => {
     switch (lobbyStatus) {
       case 'pickingWord':
         return (
           <p>
-            {context.stateUsername === drawingUser
+            {stateUsername === drawingUser
               ? 'Choose a word to draw'
               : `${drawingUser} is choosing a word to draw`}
           </p>
         );
       case 'playing':
-        return context?.wordToDraw ? (
-          `You are drawing ${context.wordToDraw}`
+        return wordToDraw ? (
+          `You are drawing ${wordToDraw}`
         ) : (
           <div className="flex">
-            {context?.maskedWord?.split(' ')?.map((word: string) => (
+            {unmaskedWord ? (
               <>
-                <div className="flex">
-                  {word?.split('')?.map((char: string) => (
-                    <div className="me-1">{char}</div>
-                  ))}
-                </div>
-                <div
-                  className="me-2"
-                  style={{ verticalAlign: 'super', fontSize: '0.75rem' }}
-                >
-                  {word?.length}
-                </div>
+                {unmaskedWord?.split(' ')?.map((word: string) => (
+                  <>
+                    <div>{word}</div>
+                    <div
+                      className="me-2"
+                      style={{ verticalAlign: 'super', fontSize: '0.75rem' }}
+                    >
+                      {word?.length}
+                    </div>
+                  </>
+                ))}
               </>
-            ))}
+            ) : (
+              <>
+                {maskedWord?.split(' ')?.map((word: string) => (
+                  <>
+                    <div className="flex">
+                      {word?.split('')?.map((char: string) => (
+                        <div className="me-1">{char}</div>
+                      ))}
+                    </div>
+                    <div
+                      className="me-2"
+                      style={{ verticalAlign: 'super', fontSize: '0.75rem' }}
+                    >
+                      {word?.length}
+                    </div>
+                  </>
+                ))}
+              </>
+            )}
           </div>
         );
     }
   };
 
-  return <div>{getInfoBarMessage()}</div>;
+  return (
+    <div className="flex content-between">
+      <div>{roundEndTimeStamp && <CountDown lobbyName={lobbyName} />}</div>
+      <div>{getInfoBarMessage()}</div>
+    </div>
+  );
 }

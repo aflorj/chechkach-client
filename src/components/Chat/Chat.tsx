@@ -36,27 +36,29 @@ export default function Chat({ lobbyName }: any) {
   };
 
   return (
-    <div>
-      {context?.messageHistory?.length > 0 &&
-        context?.messageHistory?.map((msgObj: any) => {
-          if (msgObj.serverMessage) {
-            return <>{buildServerMessage(msgObj.message)}</>;
-          } else {
-            return (
-              <div
-                className={
-                  msgObj?.message?.type === 'winnersOnly'
-                    ? 'text-green-400'
-                    : ''
-                }
-              >
-                {msgObj?.userName}
-                {': '}
-                {msgObj?.message?.content}
-              </div>
-            );
-          }
-        })}
+    <div id="chat" className="flex flex-col">
+      <div className="grow">
+        {context?.messageHistory?.length > 0 &&
+          context?.messageHistory?.map((msgObj: any) => {
+            if (msgObj.serverMessage) {
+              return <>{buildServerMessage(msgObj.message)}</>;
+            } else {
+              return (
+                <div
+                  className={
+                    msgObj?.message?.type === 'winnersOnly'
+                      ? 'text-green-400'
+                      : ''
+                  }
+                >
+                  {msgObj?.userName}
+                  {': '}
+                  {msgObj?.message?.content}
+                </div>
+              );
+            }
+          })}
+      </div>
       <div>
         <input value={msg} onChange={(e) => setMsg(e?.target?.value)} />
         <button onClick={() => sendMessage()}>send</button>

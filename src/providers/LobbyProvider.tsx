@@ -31,6 +31,10 @@ export interface LobbyContextProps {
   setStateUsername: Dispatch<SetStateAction<string | undefined>>;
   messageHistory: any;
   roundWinners: string[];
+  unmaskedWord: string | null;
+  roundStartTimeStamp: number | null;
+  roundTimer: number | null;
+  roundEndTimeStamp: number | null;
 }
 
 export const LobbyContext = createContext<Partial<LobbyContextProps>>({});
@@ -52,6 +56,10 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
   const [wordOptions, setWordOptions] = useState<string[] | null>(null);
   const [wordToDraw, setWordToDraw] = useState<string | null>(null);
   const [messageHistory, setMessageHistory] = useState<any>([]);
+  const [unmaskedWord, setUnmaskedWord] = useState<string | null>(null);
+  const [roundEndTimeStamp, setRoundEndTimeStamp] = useState<number | null>(
+    null
+  );
 
   useEffect(() => {
     function onMessage(msgObj: any) {
@@ -77,6 +85,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
         setDrawingUser(info?.drawingUser);
       } else if (newStatus === 'playing') {
         setMaskedWord(info?.maskedWord);
+        setRoundEndTimeStamp(info?.roundEndTimeStamp);
         if (info?.drawingUser === stateUsername) {
           // if we are the drawing user we are now allowed to draw
           setAllowedToDraw(true);
@@ -89,15 +98,23 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
       setUsers(newUserState);
     }
 
-    function onPickAWord({ arrayOfWordOptions }: any) {
+    function onPickAWord({
+      arrayOfWordOptions,
+    }: {
+      arrayOfWordOptions: string[];
+    }) {
       console.log('i can choose from: ', ...arrayOfWordOptions);
       setWordOptions(arrayOfWordOptions);
     }
 
-    function onStartDrawing({ wordToDraw }: any) {
+    function onStartDrawing({ wordToDraw }: { wordToDraw: string }) {
       //   console.log('i have to draw: ', wordToDraw);
       setWordOptions(null);
       setWordToDraw(wordToDraw);
+    }
+
+    function onUnmaskedWord({ unmaskedWord }: { unmaskedWord: string }) {
+      setUnmaskedWord(unmaskedWord);
     }
 
     socket.on('message', onMessage);
@@ -105,6 +122,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
     socket.on('userStateChange', onUserStateChange);
     socket.on('pickAWord', onPickAWord);
     socket.on('startDrawing', onStartDrawing);
+    socket.on('unmaskedWord', onUnmaskedWord);
 
     return () => {
       socket.off('message', onMessage);
@@ -112,6 +130,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
       socket.off('userStateChange', onUserStateChange);
       socket.off('pickAWord', onPickAWord);
       socket.off('startDrawing', onStartDrawing);
+      socket.off('unmaskedWord', onUnmaskedWord);
     };
   }, [stateUsername]);
 
@@ -146,6 +165,8 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
         setStateUsername,
         messageHistory,
         roundWinners,
+        unmaskedWord,
+        roundEndTimeStamp,
       }}
     >
       {props.children}

@@ -122,7 +122,7 @@ export default function Lobby() {
     return (
       <DrawingBoardProvider>
         {context?.wordOptions && <WordPicker lobbyName={lobbyInfo?.name} />}
-        <InfoBar />
+        <InfoBar lobbyName={lobbyName} />
         <div className="flex">
           <PlayerList />
           <div className="flex flex-col">
