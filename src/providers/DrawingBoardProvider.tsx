@@ -38,7 +38,7 @@ interface DBPProps {
 }
 
 const DrawingBoardProvider = (props: DBPProps) => {
-  const context = useContext(LobbyContext);
+  const { allowedToDraw, lobbyStatus } = useContext(LobbyContext);
   const [isDrawing, setIsDrawing] = useState(false);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
   const [color, setColor] = useState('#000000');
@@ -59,8 +59,10 @@ const DrawingBoardProvider = (props: DBPProps) => {
         }
       });
 
-      socket.on('roundStart', () => {
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      socket.on('lobbyStatusChange', ({ newStatus }) => {
+        if (newStatus === 'playing') {
+          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        }
       });
     }
   }, [ctx]);
@@ -79,7 +81,7 @@ const DrawingBoardProvider = (props: DBPProps) => {
   };
 
   const draw = (ev: BoardEvent, isEnding = false) => {
-    if (!ctx || !isDrawing || !context.allowedToDraw) {
+    if (!ctx || !isDrawing || !allowedToDraw || lobbyStatus !== 'playing') {
       return;
     }
     const newLine = {

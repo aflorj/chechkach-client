@@ -47,7 +47,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
   // temporary
 
   const [users, setUsers] = useState<User[]>([]);
-  const [roundWinners, setRoundWinner] = useState<string[]>([]);
+  const [roundWinners, setRoundWinners] = useState<string[]>([]);
   const [maskedWord, setMaskedWord] = useState<string | null>(null);
   const [allowedToDraw, setAllowedToDraw] = useState(false);
   const [lobbyStatus, setLobbyStatus] = useState(); // TODO probably an enum
@@ -81,8 +81,21 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
 
       // switching to 'pickingWord' status
       if (newStatus === 'pickingWord') {
-        // everyone gets notified of the drawing user
-        setDrawingUser(info?.drawingUser);
+        // everyone gets notified of the drawing user (only in the first round, the following rounds info comes in 'roundOver')
+        info?.drawingUser && setDrawingUser(info?.drawingUser);
+
+        //this is basically the first status of a new round so resets are required here
+        setRoundWinners([]);
+        setMaskedWord(null);
+        setAllowedToDraw(false);
+        setWordToDraw(null);
+        setUnmaskedWord(null);
+        setRoundEndTimeStamp(null);
+
+        // we already set the drawinguser for the upcoming round in the 'roundEnd'. Here we just reset the wordoptions for the user that was drawing in the previous round
+        if (stateUsername !== drawingUser) {
+          setWordOptions(null);
+        }
       } else if (newStatus === 'playing') {
         setMaskedWord(info?.maskedWord);
         setRoundEndTimeStamp(info?.roundEndTimeStamp);
@@ -90,6 +103,8 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
           // if we are the drawing user we are now allowed to draw
           setAllowedToDraw(true);
         }
+      } else if (newStatus === 'roundOver') {
+        setDrawingUser(info?.drawingNext);
       }
     }
 

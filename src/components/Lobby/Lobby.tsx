@@ -12,7 +12,14 @@ import PlayerList from '../PlayerList/PlayerList';
 import Palette from '../Palette/Palette';
 
 export default function Lobby() {
-  const context = useContext(LobbyContext);
+  const {
+    stateUsername,
+    lobbyStatus,
+    wordOptions,
+    allowedToDraw,
+    users,
+    messageHistory,
+  } = useContext(LobbyContext);
   const { state } = useLocation();
 
   const [lobbyInfo, setLobbyInfo] = useState<any>();
@@ -25,7 +32,7 @@ export default function Lobby() {
 
   const sendMessage = () => {
     socket.send({
-      userName: context.stateUsername,
+      userName: stateUsername,
       lobbyName: lobbyName,
       messageType: 'chat',
       messageContent: msg,
@@ -36,7 +43,7 @@ export default function Lobby() {
     console.log('start game button click');
     socket.emit('startGame', {
       lobbyName: lobbyName,
-      userName: context.stateUsername,
+      userName: stateUsername,
     });
   };
 
@@ -52,7 +59,7 @@ export default function Lobby() {
       console.log('fire onconnect');
       socket.emit('join', {
         lobbyName: lobbyName,
-        userName: context.stateUsername,
+        userName: stateUsername,
       });
       setIsConnected(true);
     }
@@ -115,19 +122,20 @@ export default function Lobby() {
   }, []);
 
   if (
-    context?.lobbyStatus === 'pickingWord' ||
-    context?.lobbyStatus === 'playing' ||
-    context?.lobbyStatus === 'endgame'
+    lobbyStatus === 'pickingWord' ||
+    lobbyStatus === 'playing' ||
+    lobbyStatus === 'roundOver' ||
+    lobbyStatus === 'endgame'
   ) {
     return (
       <DrawingBoardProvider>
-        {context?.wordOptions && <WordPicker lobbyName={lobbyInfo?.name} />}
+        {wordOptions && <WordPicker lobbyName={lobbyInfo?.name} />}
         <InfoBar lobbyName={lobbyName} />
         <div className="flex">
           <PlayerList />
           <div className="flex flex-col">
             <MagicCanvas lobbyName={lobbyInfo?.name} />
-            {context.allowedToDraw && <Palette />}
+            {allowedToDraw && <Palette />}
           </div>
           <Chat lobbyName={lobbyInfo?.name} />
         </div>
@@ -139,13 +147,12 @@ export default function Lobby() {
       <div className="bg-purple-100 md:w-1/2 mx-auto p-4">
         <div className="text-3xl flex justify-between">
           <div>
-            {lobbyInfo?.name} ({context?.lobbyStatus})
+            {lobbyInfo?.name} ({lobbyStatus})
           </div>
-          {context.stateUsername ===
-            context?.users?.filter((player: any) => player.isOwner)?.[0]
-              ?.playerId && (
+          {stateUsername ===
+            users?.filter((player: any) => player.isOwner)?.[0]?.playerId && (
             <button
-              disabled={context?.users?.length < 2 || isStartingGame}
+              disabled={users?.length < 2 || isStartingGame}
               onClick={() => startGame()}
             >
               start
@@ -153,7 +160,7 @@ export default function Lobby() {
           )}
         </div>
         <div className="bg-purple-50 rounded-md mt-4">
-          {context?.users?.map((user: any) => (
+          {users?.map((user: any) => (
             <div>
               {user?.playerId} {user?.isOwner && <>♛</>}
             </div>
@@ -178,8 +185,8 @@ export default function Lobby() {
           </div>
           <div>messages:</div>
           <div>
-            {context?.messageHistory?.length > 0 &&
-              context?.messageHistory?.map((msgObj: any) => (
+            {messageHistory?.length > 0 &&
+              messageHistory?.map((msgObj: any) => (
                 <div>
                   {msgObj?.userName}
                   {': '}
