@@ -125,7 +125,7 @@ export default function Lobby() {
     lobbyStatus === 'pickingWord' ||
     lobbyStatus === 'playing' ||
     lobbyStatus === 'roundOver' ||
-    lobbyStatus === 'endgame'
+    lobbyStatus === 'gameOver'
   ) {
     return (
       <DrawingBoardProvider>

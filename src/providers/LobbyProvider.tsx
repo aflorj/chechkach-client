@@ -24,7 +24,7 @@ export interface LobbyContextProps {
   allowedToDraw: boolean;
   lobbyStatus: string; // TOOD enum
   scoresThisRound: any;
-  drawingUser: string;
+  drawingUser: string | null;
   wordOptions: string[] | null;
   wordToDraw: string | null;
   stateUsername: string | null;
@@ -52,7 +52,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
   const [allowedToDraw, setAllowedToDraw] = useState(false);
   const [lobbyStatus, setLobbyStatus] = useState(); // TODO probably an enum
   const [scoresThisRound, setScoresThisRound] = useState();
-  const [drawingUser, setDrawingUser] = useState();
+  const [drawingUser, setDrawingUser] = useState<string | null>(null);
   const [wordOptions, setWordOptions] = useState<string[] | null>(null);
   const [wordToDraw, setWordToDraw] = useState<string | null>(null);
   const [messageHistory, setMessageHistory] = useState<any>([]);
@@ -70,13 +70,6 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
     }
 
     function onLobbyStatusChange({ newStatus, info }: any) {
-      // console.log(
-      //   'new info about the lobby status: ',
-      //   newStatus,
-      //   ' and info: ',
-      //   info
-      // );
-
       setLobbyStatus(newStatus);
 
       // switching to 'pickingWord' status
@@ -104,12 +97,18 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
           setAllowedToDraw(true);
         }
       } else if (newStatus === 'roundOver') {
-        setDrawingUser(info?.drawingNext);
+        // info.drawing is not in the message in the last drawing before the gameOver so check
+        setDrawingUser(info?.drawingNext ?? null);
+        setRoundEndTimeStamp(null);
+
+        // unmask for the players that haven't guessed the word
+        unmaskedWord === null && setUnmaskedWord(info?.unmaskedWord);
+      } else if (newStatus === 'gameOver') {
+        // TODO if something specific has to be set here
       }
     }
 
     function onUserStateChange({ newUserState }: any) {
-      //   console.log('new info about the users: ', newUserState);
       setUsers(newUserState);
     }
 
@@ -118,12 +117,10 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
     }: {
       arrayOfWordOptions: string[];
     }) {
-      console.log('i can choose from: ', ...arrayOfWordOptions);
       setWordOptions(arrayOfWordOptions);
     }
 
     function onStartDrawing({ wordToDraw }: { wordToDraw: string }) {
-      //   console.log('i have to draw: ', wordToDraw);
       setWordOptions(null);
       setWordToDraw(wordToDraw);
     }
@@ -148,22 +145,6 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
       socket.off('unmaskedWord', onUnmaskedWord);
     };
   }, [stateUsername]);
-
-  //   useEffect(() => {
-  //     console.log('atd: ', allowedToDraw);
-  //   }, [allowedToDraw]);
-
-  useEffect(() => {
-    console.log('state username: ', stateUsername);
-  }, [stateUsername]);
-
-  useEffect(() => {
-    console.log('lobbyStatus: ', lobbyStatus);
-  }, [lobbyStatus]);
-
-  useEffect(() => {
-    console.log('users: ', users);
-  }, [users]);
 
   return (
     <LobbyContext.Provider

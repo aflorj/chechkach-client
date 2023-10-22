@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { LobbyContext } from '../../providers/LobbyProvider';
 import CountDown from '../CountDown/CountDown';
 
@@ -36,7 +36,7 @@ export default function InfoBar({
               <>
                 {unmaskedWord?.split(' ')?.map((word: string) => (
                   <>
-                    <div>{word}</div>
+                    <div className="me-1">{word}</div>
                     <div
                       className="me-2"
                       style={{ verticalAlign: 'super', fontSize: '0.75rem' }}
@@ -67,6 +67,24 @@ export default function InfoBar({
             )}
           </div>
         );
+      case 'roundOver':
+        return (
+          <>
+            {unmaskedWord?.split(' ')?.map((word: string) => (
+              <div className="flex">
+                <div className="me-1">{word}</div>
+                <div
+                  className="me-2"
+                  style={{ verticalAlign: 'super', fontSize: '0.75rem' }}
+                >
+                  {word?.length}
+                </div>
+              </div>
+            ))}
+          </>
+        );
+      case 'gameOver':
+        return <>Game over</>;
     }
   };
 
