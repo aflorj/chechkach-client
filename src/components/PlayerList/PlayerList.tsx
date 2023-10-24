@@ -8,8 +8,11 @@ export default function PlayerList() {
     <div>
       {context?.users?.map((user: any) => (
         <div>
-          {user?.playerId}
-          {user?.playerId === context?.drawingUser && <>✎</>}
+          <div>
+            {user?.playerId}
+            {user?.playerId === context?.drawingUser && <>✎</>}
+          </div>
+          <div>{user?.score}</div>
         </div>
       ))}
     </div>

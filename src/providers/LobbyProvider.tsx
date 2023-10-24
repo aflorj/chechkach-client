@@ -100,6 +100,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
         // info.drawing is not in the message in the last drawing before the gameOver so check
         setDrawingUser(info?.drawingNext ?? null);
         setRoundEndTimeStamp(null);
+        setUsers(info?.players);
 
         // unmask for the players that haven't guessed the word
         unmaskedWord === null && setUnmaskedWord(info?.unmaskedWord);
@@ -129,12 +130,20 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
       setUnmaskedWord(unmaskedWord);
     }
 
+    function onNewRoundEndTimeStamp({
+      newRoundEndTimeStamp,
+    }: {
+      newRoundEndTimeStamp: number;
+    }) {
+      setRoundEndTimeStamp(newRoundEndTimeStamp);
+    }
     socket.on('message', onMessage);
     socket.on('lobbyStatusChange', onLobbyStatusChange);
     socket.on('userStateChange', onUserStateChange);
     socket.on('pickAWord', onPickAWord);
     socket.on('startDrawing', onStartDrawing);
     socket.on('unmaskedWord', onUnmaskedWord);
+    socket.on('newRoundEndTimeStamp', onNewRoundEndTimeStamp);
 
     return () => {
       socket.off('message', onMessage);
@@ -143,6 +152,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
       socket.off('pickAWord', onPickAWord);
       socket.off('startDrawing', onStartDrawing);
       socket.off('unmaskedWord', onUnmaskedWord);
+      socket.off('newRoundEndTimeStamp', onNewRoundEndTimeStamp);
     };
   }, [stateUsername]);
 
