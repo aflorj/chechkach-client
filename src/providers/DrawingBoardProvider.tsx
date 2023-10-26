@@ -27,6 +27,8 @@ export interface DrawingBoardContextProps {
   brushSize: number;
   handleBrushSizeChange: (newSize: number) => void;
   setLobbyName: (lobbyName: string) => void;
+  undo: () => void;
+  canUndo: boolean;
 }
 
 export const DrawingBoardContext = createContext<
@@ -38,12 +40,14 @@ interface DBPProps {
 }
 
 const DrawingBoardProvider = (props: DBPProps) => {
+  let currentLine: Line[] = [];
   const { allowedToDraw, lobbyStatus } = useContext(LobbyContext);
   const [isDrawing, setIsDrawing] = useState(false);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
   const [color, setColor] = useState('#000000');
   const [brushSize, setBrushSize] = useState(10);
   const [lobbyName, setLobbyName] = useState<string>();
+  const [canUndo, setCanUndo] = useState(false);
 
   useEffect(() => {
     if (ctx) {
@@ -62,6 +66,21 @@ const DrawingBoardProvider = (props: DBPProps) => {
         if (newStatus === 'playing') {
           ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         }
+      });
+
+      socket.on('canvasAfterRedo', ({ newCanvas, isCanvasEmpty }) => {
+        if (isCanvasEmpty) {
+          setCanUndo(false);
+        }
+        // 'redo' triggered by the drawer, clear the canvas
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+        // and redraw without the last line
+        newCanvas?.forEach((fullLine: Line[]) => {
+          fullLine?.forEach((line: Line) => {
+            drawLine(line);
+          });
+        });
       });
     }
   }, [ctx]);
@@ -83,6 +102,7 @@ const DrawingBoardProvider = (props: DBPProps) => {
     if (!ctx || !isDrawing || !allowedToDraw || lobbyStatus !== 'playing') {
       return;
     }
+
     const newLine = {
       x: ev.clientX - ctx.canvas.offsetLeft,
       y: ev.clientY - ctx.canvas.offsetTop,
@@ -90,11 +110,37 @@ const DrawingBoardProvider = (props: DBPProps) => {
       brushSize,
       isEnding,
     };
+    savePoint(newLine, isEnding);
     drawLine(newLine);
     socket.emit('draw', {
       newLine: newLine,
       lobbyName: lobbyName,
     });
+  };
+
+  const undo = () => {
+    if (allowedToDraw && lobbyStatus === 'playing') {
+      socket.emit('undo', {
+        lobbyName: lobbyName,
+      });
+    }
+  };
+
+  const savePoint = (line: Line, isEnding: boolean) => {
+    if (allowedToDraw && !canUndo) {
+      setCanUndo(true);
+    }
+
+    if (isEnding) {
+      currentLine?.push(line);
+      // the line has ended - emit "fullLine"
+      socket.emit('fullLine', {
+        fullLine: currentLine,
+        lobbyName: lobbyName,
+      });
+    } else {
+      currentLine?.push(line);
+    }
   };
 
   const handleMouseMove = (ev: BoardEvent): void => {
@@ -130,6 +176,8 @@ const DrawingBoardProvider = (props: DBPProps) => {
         handleBrushSizeChange,
         handleColorChange,
         setLobbyName,
+        undo,
+        canUndo,
       }}
     >
       {props.children}

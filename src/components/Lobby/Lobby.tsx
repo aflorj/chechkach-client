@@ -53,10 +53,7 @@ export default function Lobby() {
     // Send the lobby name to the server after connection
     // socket.emit('joinLobby', { lobbyName: lobbyName, usserName: 'test' });
 
-    console.log('render');
-
     function onConnect() {
-      console.log('fire onconnect');
       socket.emit('join', {
         lobbyName: lobbyName,
         userName: stateUsername,
@@ -102,18 +99,9 @@ export default function Lobby() {
       });
   };
 
-  // const toggleReady = () => {
-  //   socket.emit('ready_change', {
-  //     userName: stateUsername,
-  //     lobbyName: lobbyName,
-  //     isReady: !isReady,
-  //   });
-  //   setIsReady(!isReady);
-  // };
-
   useEffect(() => {
     if (state) {
-      // for users coming from lobbylist/lobbbbycard - not refreshing
+      // for users coming from lobbylist/lobbycard - not refreshing
       setLobbyInfo(state);
     } else {
       // refresh
@@ -166,17 +154,7 @@ export default function Lobby() {
             </div>
           ))}
         </div>
-        <div>
-          {isConnected ? 'connected' : 'not connected'}{' '}
-          <button onClick={() => socket.connect()}>connect</button>
-          <button onClick={() => socket.disconnect()}>disconnect</button>
-          {/* <button
-            onClick={() => toggleReady()}
-            disabled={lobbyInfo?.status === 'playing'}
-            >
-            Ready {isReady ? '!' : '?'}
-          </button> */}
-        </div>
+        <div>{isConnected ? 'connected' : 'not connected'} </div>
         <br />
         <div>
           <div>

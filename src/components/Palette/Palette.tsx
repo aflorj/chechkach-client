@@ -50,6 +50,9 @@ export default function Palette() {
           {sizeOption}
         </div>
       ))}
+      <button disabled={!context.canUndo} onClick={() => context.undo!()}>
+        Undo
+      </button>
     </div>
   );
 }
