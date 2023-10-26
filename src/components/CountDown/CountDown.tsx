@@ -20,8 +20,18 @@ export default function CountDown({
     });
   };
 
+  const triggerHint = (index: number) => {
+    socket.emit('triggerHint', {
+      userName: stateUsername,
+      lobbyName: lobbyName,
+      index: index,
+    });
+  };
+
   useEffect(() => {
     countDown === 0 && allowedToDraw && triggerRoundEndByTimer();
+    countDown === 25 && allowedToDraw && triggerHint(0);
+    countDown === 15 && allowedToDraw && triggerHint(1);
   }, [countDown]);
 
   return <div>{countDown}</div>;

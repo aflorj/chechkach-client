@@ -48,7 +48,6 @@ const DrawingBoardProvider = (props: DBPProps) => {
   useEffect(() => {
     if (ctx) {
       socket.on('newLine', ({ newLine }) => {
-        console.log('new line to draw: ', newLine);
         drawLine(newLine);
       });
 

@@ -9,7 +9,15 @@ export default function PlayerList() {
       {context?.users?.map((user: any) => (
         <div>
           <div>
-            {user?.playerId}
+            <span
+              className={`${
+                context?.roundWinners?.includes(user?.playerId)
+                  ? 'text-green-600'
+                  : ''
+              }`}
+            >
+              {user?.playerId}
+            </span>
             {user?.playerId === context?.drawingUser && <>✎</>}
           </div>
           <div>{user?.score}</div>

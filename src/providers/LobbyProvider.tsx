@@ -63,10 +63,15 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
 
   useEffect(() => {
     function onMessage(msgObj: any) {
-      console.log('to je prispelo: ', msgObj);
       setMessageHistory((prevState: any) => [...prevState, msgObj]);
 
-      // if type === correctGuess dodamo userja v winners
+      // if it's a correctGuess message set the roundwinners array
+      if (msgObj?.message?.type === 'correctGuess') {
+        setRoundWinners((prevState: any) => [
+          ...prevState,
+          msgObj?.message?.content,
+        ]);
+      }
     }
 
     function onLobbyStatusChange({ newStatus, info }: any) {
@@ -137,6 +142,13 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
     }) {
       setRoundEndTimeStamp(newRoundEndTimeStamp);
     }
+
+    function onHint({ hint }: { hint: { index: number; letter: string } }) {
+      let maskedWordChars = [...maskedWord!];
+      maskedWordChars![hint?.index] = hint?.letter;
+      setMaskedWord(maskedWordChars?.join(''));
+    }
+
     socket.on('message', onMessage);
     socket.on('lobbyStatusChange', onLobbyStatusChange);
     socket.on('userStateChange', onUserStateChange);
@@ -144,6 +156,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
     socket.on('startDrawing', onStartDrawing);
     socket.on('unmaskedWord', onUnmaskedWord);
     socket.on('newRoundEndTimeStamp', onNewRoundEndTimeStamp);
+    socket.on('hint', onHint);
 
     return () => {
       socket.off('message', onMessage);
@@ -153,8 +166,9 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
       socket.off('startDrawing', onStartDrawing);
       socket.off('unmaskedWord', onUnmaskedWord);
       socket.off('newRoundEndTimeStamp', onNewRoundEndTimeStamp);
+      socket.off('hint', onHint);
     };
-  }, [stateUsername]);
+  }, [stateUsername, maskedWord, roundWinners]);
 
   return (
     <LobbyContext.Provider
