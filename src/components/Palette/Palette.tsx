@@ -2,7 +2,15 @@ import { useContext } from 'react';
 import { DrawingBoardContext } from '../../providers/DrawingBoardProvider';
 
 export default function Palette() {
-  const context = useContext(DrawingBoardContext);
+  const {
+    color,
+    handleColorChange,
+    handleBrushSizeChange,
+    canUndo,
+    undo,
+    setActiveTool,
+    activeTool,
+  } = useContext(DrawingBoardContext);
 
   const colorOptions = [
     {
@@ -31,26 +39,25 @@ export default function Palette() {
 
   return (
     <div className="flex p-2">
-      <div
-        className="h-12 w-12 me-2"
-        style={{ backgroundColor: context.color }}
-      ></div>
+      <div className="h-12 w-12 me-2" style={{ backgroundColor: color }}></div>
       {colorOptions?.map((colorOption) => (
         <div
           style={{ backgroundColor: colorOption.hex }}
           className="h-6 w-6"
-          onClick={() => context.handleColorChange!(colorOption.hex)}
+          onClick={() => handleColorChange!(colorOption.hex)}
         ></div>
       ))}
       {sizeOptions?.map((sizeOption) => (
         <div
           className="mx-1"
-          onClick={() => context.handleBrushSizeChange!(sizeOption)}
+          onClick={() => handleBrushSizeChange!(sizeOption)}
         >
           {sizeOption}
         </div>
       ))}
-      <button disabled={!context.canUndo} onClick={() => context.undo!()}>
+      <button onClick={() => setActiveTool!('bucket')}>bucket fill</button>
+      <button onClick={() => setActiveTool!('marker')}>marker</button>
+      <button disabled={!canUndo} onClick={() => undo!()}>
         Undo
       </button>
     </div>

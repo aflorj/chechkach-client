@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import { socket } from '../socket';
+import { PRODUCTION } from '../../config.ts';
 
 export type User = {
   connected: boolean;
@@ -28,7 +29,7 @@ export interface LobbyContextProps {
   wordOptions: string[] | null;
   wordToDraw: string | null;
   stateUsername: string | null;
-  setStateUsername: Dispatch<SetStateAction<string | undefined>>;
+  setStateUsername: Dispatch<SetStateAction<string | null>>;
   messageHistory: any;
   roundWinners: string[];
   unmaskedWord: string | null;
@@ -40,11 +41,9 @@ export interface LobbyContextProps {
 export const LobbyContext = createContext<Partial<LobbyContextProps>>({});
 
 const LobbyProvider = (props: ILobbyProviderProps) => {
-  // temporary
-  const [stateUsername, setStateUsername] = useState<undefined | string>(
-    undefined
+  const [stateUsername, setStateUsername] = useState<string | null>(
+    PRODUCTION ? localStorage.getItem('userName') : null
   );
-  // temporary
 
   const [users, setUsers] = useState<User[]>([]);
   const [roundWinners, setRoundWinners] = useState<string[]>([]);

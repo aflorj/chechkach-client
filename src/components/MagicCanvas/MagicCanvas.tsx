@@ -6,7 +6,14 @@ interface IMagicCanvasProps {
 }
 
 export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
-  const context = useContext(DrawingBoardContext);
+  const {
+    brushSize,
+    handleMouseDown,
+    handleMouseUp,
+    handleMouseMove,
+    setCtx,
+    setLobbyName,
+  } = useContext(DrawingBoardContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useLayoutEffect(() => {
@@ -14,24 +21,25 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
     canvas.height = 500;
     canvas.width = 500;
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx.lineWidth = context.brushSize!;
+    ctx.lineWidth = brushSize!;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    context.setCtx!(ctx);
+    setCtx!(ctx);
   }, []);
 
   useEffect(() => {
-    context!.setLobbyName!(lobbyName);
+    setLobbyName!(lobbyName);
   }, [lobbyName]);
 
   return (
     <div>
       <canvas
+        // style={{ background: 'url(/paper2.jpeg)' }}
         className="border border-black"
         ref={canvasRef}
-        onMouseDown={context.handleMouseDown}
-        onMouseUp={context.handleMouseUp}
-        onMouseMove={context.handleMouseMove}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
       ></canvas>
     </div>
   );

@@ -3,14 +3,14 @@ import { LobbyContext } from '../../providers/LobbyProvider';
 import { socket } from '../../socket';
 
 export default function Chat({ lobbyName }: any) {
-  const context = useContext(LobbyContext);
+  const { stateUsername, messageHistory } = useContext(LobbyContext);
 
   const [msg, setMsg] = useState('');
 
   const sendMessage = () => {
     if (msg?.trim()) {
       socket.send({
-        userName: context.stateUsername,
+        userName: stateUsername,
         lobbyName: lobbyName,
         messageType: 'chat',
         messageContent: msg?.trim(),
@@ -21,7 +21,7 @@ export default function Chat({ lobbyName }: any) {
 
   const buildServerMessage = (msg: any) => {
     if (msg.type === 'correctGuess') {
-      if (msg?.content === context.stateUsername) {
+      if (msg?.content === stateUsername) {
         return <div className="text-green-600">You have guessed the word.</div>;
       } else {
         return (
@@ -38,8 +38,8 @@ export default function Chat({ lobbyName }: any) {
   return (
     <div id="chat" className="flex flex-col">
       <div className="grow">
-        {context?.messageHistory?.length > 0 &&
-          context?.messageHistory?.map((msgObj: any) => {
+        {messageHistory?.length > 0 &&
+          messageHistory?.map((msgObj: any) => {
             if (msgObj.serverMessage) {
               return <>{buildServerMessage(msgObj.message)}</>;
             } else {
