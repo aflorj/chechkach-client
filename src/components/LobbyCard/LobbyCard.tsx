@@ -19,15 +19,20 @@ export default function LobbyCard({ lobby }: ILobbyCardProps) {
       // headers: {},
       data: {
         lobbyName: lobby?.name,
-        // posljemo tud svoje ime?
+        // send socketId to check if we are already in this (or any other?) lobby
+        lastKnownSocketId: localStorage?.getItem('localSocketId'),
       },
     })
       .then((res) => {
-        setIsJoining(false);
-        console.log('join res: ', res);
-        navigate(`/lobby/${lobby?.name}`, {
-          state: res?.data?.lobbyInfo,
-        });
+        if (res?.data?.full) {
+          // display full lobbby message
+        } else {
+          setIsJoining(false);
+          console.log('join res: ', res);
+          navigate(`/lobby/${lobby?.name}`, {
+            state: res?.data?.lobbyInfo,
+          });
+        }
       })
       .catch((err) => {
         console.error('ta error pri joinu: ', err);

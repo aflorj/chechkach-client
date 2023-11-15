@@ -22,12 +22,13 @@ export default function Lobby() {
   } = useContext(LobbyContext);
   const { state } = useLocation();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [lobbyInfo, setLobbyInfo] = useState<any>();
   const { lobbyName } = useParams();
 
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [isStartingGame, setIsStartingGame] = useState(false);
-  // const [isReady, setIsReady] = useState(false); we don't track player's ready status anymore
+
   const [msg, setMsg] = useState('');
 
   const sendMessage = () => {
@@ -50,15 +51,32 @@ export default function Lobby() {
   useEffect(() => {
     socket.connect();
 
-    // Send the lobby name to the server after connection
-    // socket.emit('joinLobby', { lobbyName: lobbyName, usserName: 'test' });
-
+    // when joining a lobby also send the latest known socket id to check if user is already in some lobby
+    let lastKnownSocketId = localStorage?.getItem('localSocketId');
     function onConnect() {
       socket.emit('join', {
         lobbyName: lobbyName,
         userName: stateUsername,
+        lastKnownSocketId: lastKnownSocketId,
       });
+
+      // we have connected - save our socket id to localStorage
+      localStorage?.setItem('localSocketId', socket?.id);
+      console.log('PO: ', socket?.id);
       setIsConnected(true);
+    }
+
+    function onConnectAttemptResponse({ response }: any) {
+      console.log('response tu: ', response);
+      // DOING
+
+      if (response?.allGood) {
+        console.log('all good');
+        setIsLoading(false);
+      }
+      if (response?.alreadyActive) {
+        console.log('you shouldnt be here');
+      }
     }
 
     function onDisconnect() {
@@ -72,11 +90,14 @@ export default function Lobby() {
     }
 
     socket.on('connect', onConnect);
+    socket.on('connectAttemptResponse', onConnectAttemptResponse);
     socket.on('disconnect', onDisconnect);
     socket.on('lobbyUpdate', onLobbyUpdate);
 
     return () => {
       socket.off('connect', onConnect);
+      socket.off('connectAttemptResponse', onConnectAttemptResponse);
+
       socket.off('disconnect', onDisconnect);
       socket.off('lobbyUpdate', onLobbyUpdate);
 
@@ -130,7 +151,9 @@ export default function Lobby() {
       </DrawingBoardProvider>
     );
   }
-  return (
+  return isLoading ? (
+    <>Loading...</>
+  ) : (
     <div className="h-screen pt-8">
       <div className="bg-purple-100 md:w-1/2 mx-auto p-4">
         <div className="text-3xl flex justify-between">

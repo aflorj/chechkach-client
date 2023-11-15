@@ -4,6 +4,7 @@ import { LobbyContext } from '../../providers/LobbyProvider';
 export default function PlayerList() {
   const { users, drawingUser, roundWinners } = useContext(LobbyContext);
 
+  // TODO cn lib
   return (
     <div>
       {users?.map((user: any) => (
@@ -12,7 +13,7 @@ export default function PlayerList() {
             <span
               className={`${
                 roundWinners?.includes(user?.playerId) ? 'text-green-600' : ''
-              }`}
+              } ${!user.connected ? 'line-through' : ''}`}
             >
               {user?.playerId}
             </span>
