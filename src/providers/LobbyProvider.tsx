@@ -24,6 +24,7 @@ export interface LobbyContextProps {
   maskedWord: string | null;
   allowedToDraw: boolean;
   lobbyStatus: string; // TOOD enum
+  setLobbyStatus: Dispatch<SetStateAction<string | undefined>>;
   scoresThisRound: any;
   drawingUser: string | null;
   wordOptions: string[] | null;
@@ -49,7 +50,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
   const [roundWinners, setRoundWinners] = useState<string[]>([]);
   const [maskedWord, setMaskedWord] = useState<string | null>(null);
   const [allowedToDraw, setAllowedToDraw] = useState(false);
-  const [lobbyStatus, setLobbyStatus] = useState(); // TODO probably an enum
+  const [lobbyStatus, setLobbyStatus] = useState<string | undefined>(undefined); // TODO probably an enum
   const [scoresThisRound, setScoresThisRound] = useState();
   const [drawingUser, setDrawingUser] = useState<string | null>(null);
   const [wordOptions, setWordOptions] = useState<string[] | null>(null);
@@ -169,6 +170,10 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
     };
   }, [stateUsername, maskedWord, roundWinners]);
 
+  // useEffect(() => {
+  //   console.log('lobbyStatus: ', lobbyStatus);
+  // }, [lobbyStatus]);
+
   return (
     <LobbyContext.Provider
       value={{
@@ -176,6 +181,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
         maskedWord,
         allowedToDraw,
         lobbyStatus,
+        setLobbyStatus,
         scoresThisRound,
         drawingUser,
         wordOptions,

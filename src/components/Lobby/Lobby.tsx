@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { socket } from '../../socket';
 import axios from 'axios';
 import DrawingBoardProvider from '../../providers/DrawingBoardProvider';
@@ -12,9 +12,12 @@ import PlayerList from '../PlayerList/PlayerList';
 import Palette from '../Palette/Palette';
 
 export default function Lobby() {
+  const navigate = useNavigate();
+
   const {
     stateUsername,
     lobbyStatus,
+    setLobbyStatus,
     wordOptions,
     allowedToDraw,
     users,
@@ -76,6 +79,7 @@ export default function Lobby() {
       }
       if (response?.alreadyActive) {
         console.log('you shouldnt be here');
+        navigate('/lobbies');
       }
     }
 
@@ -97,11 +101,8 @@ export default function Lobby() {
     return () => {
       socket.off('connect', onConnect);
       socket.off('connectAttemptResponse', onConnectAttemptResponse);
-
       socket.off('disconnect', onDisconnect);
       socket.off('lobbyUpdate', onLobbyUpdate);
-
-      //   socket.disconnect();
     };
   }, []);
 
@@ -114,46 +115,31 @@ export default function Lobby() {
       .then((res) => {
         console.log('successfull getLobby fetch: ', res?.data);
         setLobbyInfo(res?.data?.lobbyInfo);
+        setLobbyStatus!(res?.data?.lobbyInfo?.status);
       })
       .catch((err) => {
         console.error('ta error pri getLobby: ', err);
       });
   };
 
+  // useEffect(() => {
+  //   if (state) {
+  //     console.log('1, state: ', state);
+  //     // for users coming from lobbylist/lobbycard - not refreshing
+  //     setLobbyInfo(state);
+  //   } else {
+  //     // refresh
+  //     getLobbyInfo();
+  //   }
+  // }, []);
+
   useEffect(() => {
-    if (state) {
-      // for users coming from lobbylist/lobbycard - not refreshing
-      setLobbyInfo(state);
-    } else {
-      // refresh
-      getLobbyInfo();
-    }
+    lobbyStatus === undefined && getLobbyInfo();
   }, []);
 
-  if (
-    lobbyStatus === 'pickingWord' ||
-    lobbyStatus === 'playing' ||
-    lobbyStatus === 'roundOver' ||
-    lobbyStatus === 'gameOver'
-  ) {
-    return (
-      <DrawingBoardProvider>
-        {wordOptions && <WordPicker lobbyName={lobbyInfo?.name} />}
-        <InfoBar lobbyName={lobbyName} />
-        <div className="flex">
-          <PlayerList />
-          <div className="flex flex-col">
-            <MagicCanvas lobbyName={lobbyInfo?.name} />
-            {allowedToDraw && <Palette />}
-          </div>
-          <Chat lobbyName={lobbyInfo?.name} />
-        </div>
-      </DrawingBoardProvider>
-    );
-  }
   return isLoading ? (
     <>Loading...</>
-  ) : (
+  ) : lobbyStatus === 'open' ? (
     <div className="h-screen pt-8">
       <div className="bg-purple-100 md:w-1/2 mx-auto p-4">
         <div className="text-3xl flex justify-between">
@@ -198,5 +184,18 @@ export default function Lobby() {
         </div>
       </div>
     </div>
+  ) : (
+    <DrawingBoardProvider>
+      {wordOptions && <WordPicker lobbyName={lobbyInfo?.name} />}
+      <InfoBar lobbyName={lobbyName} />
+      <div className="flex">
+        <PlayerList />
+        <div className="flex flex-col">
+          <MagicCanvas lobbyName={lobbyInfo?.name} />
+          {allowedToDraw && <Palette />}
+        </div>
+        <Chat lobbyName={lobbyInfo?.name} />
+      </div>
+    </DrawingBoardProvider>
   );
 }
