@@ -14,7 +14,10 @@ export default function WordPicker({ lobbyName }: any) {
   };
 
   return (
-    <div>
+    <div
+      id="word-picker-wrapper"
+      className="absolute h-full w-full bg-red-100 top-0 left-0 bg-opacity-50"
+    >
       <div>pick a word to draw:</div>
       {wordOptions?.map((word: string) => (
         <div onClick={() => pickWord(word)}>{word}</div>

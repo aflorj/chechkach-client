@@ -1,5 +1,7 @@
 import { useContext, useEffect, useLayoutEffect, useRef } from 'react';
 import { DrawingBoardContext } from '../../providers/DrawingBoardProvider';
+import WordPicker from '../WordPicker/WordPicker';
+import { LobbyContext } from '../../providers/LobbyProvider';
 
 interface IMagicCanvasProps {
   lobbyName: string;
@@ -14,12 +16,15 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
     setCtx,
     setLobbyName,
   } = useContext(DrawingBoardContext);
+
+  const { wordOptions } = useContext(LobbyContext);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current as HTMLCanvasElement;
     canvas.height = 500;
-    canvas.width = 500;
+    canvas.width = 700;
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.lineWidth = brushSize!;
     ctx.lineCap = 'round';
@@ -32,15 +37,16 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
   }, [lobbyName]);
 
   return (
-    <div>
+    <div id="canvas-wrapper" className={wordOptions ? 'relative' : ''}>
       <canvas
         // style={{ background: 'url(/paper2.jpeg)' }}
-        className="border border-black"
+        className="bg-white shadow-inner"
         ref={canvasRef}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
       ></canvas>
+      {wordOptions && <WordPicker lobbyName={lobbyName} />}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { LobbyContext } from '../../providers/LobbyProvider';
 import { socket } from '../../socket';
+import Message from './Message';
 
 export default function Chat({ lobbyName }: any) {
   const { stateUsername, messageHistory } = useContext(LobbyContext);
@@ -19,48 +20,23 @@ export default function Chat({ lobbyName }: any) {
     }
   };
 
-  const buildServerMessage = (msg: any) => {
-    if (msg.type === 'correctGuess') {
-      if (msg?.content === stateUsername) {
-        return <div className="text-green-600">You have guessed the word.</div>;
-      } else {
-        return (
-          <div className="text-green-600">
-            <b>{msg?.content}</b> guessed the word.
-          </div>
-        );
-      }
-    } else if (msg.type === 'playerJoiningOrLeaving') {
-      return <div className="text-yellow-400">{msg?.content}</div>;
-    }
-  };
-
+  console.log('msg history: ', messageHistory);
   return (
-    <div id="chat" className="flex flex-col">
-      <div className="grow">
-        {messageHistory?.length > 0 &&
-          messageHistory?.map((msgObj: any) => {
-            if (msgObj.serverMessage) {
-              return <>{buildServerMessage(msgObj.message)}</>;
-            } else {
-              return (
-                <div
-                  className={
-                    msgObj?.message?.type === 'winnersOnly'
-                      ? 'text-green-400'
-                      : ''
-                  }
-                >
-                  {msgObj?.userName}
-                  {': '}
-                  {msgObj?.message?.content}
-                </div>
-              );
-            }
-          })}
+    <div
+      id="chat-container"
+      className="flex flex-col bg-white border border-black rounded w-60"
+    >
+      <div>
+        {messageHistory?.map((msgObj: any) => {
+          return <Message msgObj={msgObj} />;
+        })}
       </div>
       <div>
-        <input value={msg} onChange={(e) => setMsg(e?.target?.value)} />
+        <input
+          className="w-full"
+          value={msg}
+          onChange={(e) => setMsg(e?.target?.value)}
+        />
         <button onClick={() => sendMessage()}>send</button>
       </div>
     </div>

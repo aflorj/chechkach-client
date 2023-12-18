@@ -89,7 +89,10 @@ export default function InfoBar({
   };
 
   return (
-    <div className="flex content-between">
+    <div
+      id="infobar-container"
+      className="flex content-between mb-4 bg-white border border-black p-2 rounded"
+    >
       <div>{roundEndTimeStamp && <CountDown lobbyName={lobbyName} />}</div>
       <div>{getInfoBarMessage()}</div>
     </div>

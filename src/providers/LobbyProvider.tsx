@@ -115,6 +115,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
     }
 
     function onUserStateChange({ newUserState }: any) {
+      console.log('this just in: ', newUserState);
       setUsers(newUserState);
     }
 

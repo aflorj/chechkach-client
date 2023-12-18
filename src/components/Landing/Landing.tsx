@@ -61,7 +61,7 @@ export default function Landing() {
   useLayoutEffect(() => {
     const canvas = avatarCanvasRef.current as HTMLCanvasElement;
     canvas.height = 500;
-    canvas.width = 500;
+    canvas.width = 700;
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
     ctx.lineWidth = brushSize!;
     ctx.lineCap = 'round';

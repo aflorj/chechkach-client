@@ -18,7 +18,6 @@ export default function Lobby() {
     stateUsername,
     lobbyStatus,
     setLobbyStatus,
-    wordOptions,
     allowedToDraw,
     users,
     messageHistory,
@@ -141,7 +140,7 @@ export default function Lobby() {
     <>Loading...</>
   ) : lobbyStatus === 'open' ? (
     <div className="h-screen pt-8">
-      <div className="bg-purple-100 md:w-1/2 mx-auto p-4">
+      <div className="md:w-1/2 mx-auto p-4 bg-purple-100">
         <div className="text-3xl flex justify-between">
           <div>
             {lobbyInfo?.name} ({lobbyStatus})
@@ -185,17 +184,18 @@ export default function Lobby() {
       </div>
     </div>
   ) : (
-    <DrawingBoardProvider>
-      {wordOptions && <WordPicker lobbyName={lobbyInfo?.name} />}
-      <InfoBar lobbyName={lobbyName} />
-      <div className="flex">
-        <PlayerList />
-        <div className="flex flex-col">
-          <MagicCanvas lobbyName={lobbyInfo?.name} />
-          {allowedToDraw && <Palette />}
+    <div className="mx-auto">
+      <DrawingBoardProvider>
+        <InfoBar lobbyName={lobbyName} />
+        <div className="flex">
+          <PlayerList />
+          <div className="flex flex-col mx-4">
+            <MagicCanvas lobbyName={lobbyInfo?.name} />
+            {allowedToDraw && <Palette />}
+          </div>
+          <Chat lobbyName={lobbyInfo?.name} />
         </div>
-        <Chat lobbyName={lobbyInfo?.name} />
-      </div>
-    </DrawingBoardProvider>
+      </DrawingBoardProvider>
+    </div>
   );
 }

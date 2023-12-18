@@ -160,10 +160,10 @@ const DrawingBoardProvider = (props: DBPProps) => {
     if (ctx) {
       let startX = ev ? ev.clientX - ctx.canvas.offsetLeft : fillInfo.startX;
       let startY = ev ? ev.clientY - ctx.canvas.offsetTop : fillInfo.startY;
-      let colorLayer = ctx.getImageData(0, 0, 500, 500);
+      let colorLayer = ctx.getImageData(0, 0, 700, 500);
 
       // starting position
-      let startPos = (startY * 500 + startX) * 4;
+      let startPos = (startY * 700 + startX) * 4;
 
       // color of the clicked pixel
       let startR = colorLayer.data[startPos];
@@ -197,7 +197,7 @@ const DrawingBoardProvider = (props: DBPProps) => {
       let pixelStack = [[startX, startY]];
 
       while (pixelStack.length) {
-        const canvasWidth = 500;
+        const canvasWidth = 700;
         const canvasHeight = 500;
         var newPos, x, y, pixelPos, reachLeft, reachRight;
         newPos = pixelStack.pop();

@@ -1,25 +1,37 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { LobbyContext } from '../../providers/LobbyProvider';
+import clsx from 'clsx';
 
 export default function PlayerList() {
   const { users, drawingUser, roundWinners } = useContext(LobbyContext);
 
-  // TODO cn lib
+  useEffect(() => {
+    console.log('users ', users);
+  }, [users]);
+
   return (
-    <div>
+    <div
+      id="players-container"
+      className="bg-white border border-black rounded w-48"
+    >
       {users?.map((user: any) => (
-        <div>
-          <div>
-            <span
-              className={`${
-                roundWinners?.includes(user?.playerId) ? 'text-green-600' : ''
-              } ${!user.connected ? 'line-through' : ''}`}
-            >
-              {user?.playerId}
-            </span>
-            {user?.playerId === drawingUser && <>✎</>}
+        <div className="px-2 py-1 border border-black">
+          <div className="flex justify-between align-middle">
+            <div className="self-center">#1</div>
+            <div className="flex flex-col ps-2">
+              <div
+                className={clsx(
+                  roundWinners?.includes(user?.playerId) && 'text-green-600',
+                  !user.connected && 'line-through',
+                  'font-bold text-center'
+                )}
+              >
+                {user?.playerId}
+              </div>
+              <div className="text-center">{user?.score} točk</div>
+            </div>
+            <div>{user?.playerId === drawingUser && <>✎</>}</div>
           </div>
-          <div>{user?.score}</div>
         </div>
       ))}
     </div>
