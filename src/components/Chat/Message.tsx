@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { LobbyContext } from '../../providers/LobbyProvider';
+import clsx from 'clsx';
 
 type IMessageProps = any;
 
@@ -28,9 +29,9 @@ export default function Message({ msgObj }: IMessageProps) {
   } else {
     return (
       <div
-        className={
-          msgObj?.message?.type === 'winnersOnly' ? 'text-green-400' : ''
-        }
+        className={clsx(
+          msgObj?.message?.type === 'winnersOnly' && 'text-green-400'
+        )}
       >
         {msgObj?.userName}
         {': '}

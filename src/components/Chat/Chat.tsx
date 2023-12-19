@@ -1,9 +1,12 @@
-import { useContext, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { LobbyContext } from '../../providers/LobbyProvider';
 import { socket } from '../../socket';
 import Message from './Message';
+import clsx from 'clsx';
 
 export default function Chat({ lobbyName }: any) {
+  const inputRef = useRef<any>(null);
+
   const { stateUsername, messageHistory } = useContext(LobbyContext);
 
   const [msg, setMsg] = useState('');
@@ -17,6 +20,13 @@ export default function Chat({ lobbyName }: any) {
         messageContent: msg?.trim(),
       });
       setMsg('');
+      inputRef.current!.focus();
+    }
+  };
+
+  const handleKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      sendMessage();
     }
   };
 
@@ -24,20 +34,30 @@ export default function Chat({ lobbyName }: any) {
   return (
     <div
       id="chat-container"
-      className="flex flex-col bg-white border border-black rounded w-60"
+      className="flex flex-col justify-between bg-white border border-black rounded w-60"
+      style={{ height: '32rem' }}
     >
-      <div>
-        {messageHistory?.map((msgObj: any) => {
-          return <Message msgObj={msgObj} />;
+      <div className="overflow-y-auto">
+        {messageHistory?.map((msgObj: any, index: number) => {
+          return (
+            <div
+              className={clsx(index % 2 == 0 ? 'bg-gray-100' : 'bg-gray-200')}
+            >
+              <Message msgObj={msgObj} />
+            </div>
+          );
         })}
       </div>
       <div>
         <input
+          ref={inputRef}
+          placeholder="placeholder..."
           className="w-full"
           value={msg}
           onChange={(e) => setMsg(e?.target?.value)}
+          onKeyDown={handleKeyPress}
         />
-        <button onClick={() => sendMessage()}>send</button>
+        {/* <button onClick={() => sendMessage()}>send</button> */}
       </div>
     </div>
   );
