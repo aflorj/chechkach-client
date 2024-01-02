@@ -59,7 +59,10 @@ export default function Lobbies() {
   }, [lobbies]);
 
   return (
-    <div id="lobbies-container" className="bg-transparent mx-auto rounded">
+    <div
+      id="lobbies-container"
+      className="bg-transparent mx-auto rounded px-4 lg:px-0"
+    >
       <div
         id="title-zone"
         className="flex justify-between bg-white rounded p-2 border border-black"

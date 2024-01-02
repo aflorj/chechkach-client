@@ -6,10 +6,12 @@ html,
 body,
 #root {
   height: 100%;
+  width: 100%;
 }
 
 #root {
   /* background-image: url('background.png'); */
+  background-color: #999;
 }
 
 #lobbies-container {

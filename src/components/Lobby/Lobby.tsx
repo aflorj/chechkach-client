@@ -4,7 +4,6 @@ import { socket } from '../../socket';
 import axios from 'axios';
 import DrawingBoardProvider from '../../providers/DrawingBoardProvider';
 import MagicCanvas from '../MagicCanvas/MagicCanvas';
-import WordPicker from '../WordPicker/WordPicker';
 import { LobbyContext } from '../../providers/LobbyProvider';
 import InfoBar from '../InfoBar/InfoBar';
 import Chat from '../Chat/Chat';

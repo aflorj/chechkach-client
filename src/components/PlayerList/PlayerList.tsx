@@ -12,7 +12,7 @@ export default function PlayerList() {
   return (
     <div id="players-container" className="w-48 flex flex-col gap-1">
       {users?.map((user: any) => (
-        <div className="px-2 py-1 border border-black ">
+        <div className="px-2 py-1 border border-black bg-white">
           <div className="flex justify-between align-middle">
             <div className="self-center">#1</div>
             <div className="flex flex-col ps-2">

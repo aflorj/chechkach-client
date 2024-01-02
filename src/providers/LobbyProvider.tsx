@@ -37,6 +37,7 @@ export interface LobbyContextProps {
   roundStartTimeStamp: number | null;
   roundTimer: number | null;
   roundEndTimeStamp: number | null;
+  roundScoreboard: any;
 }
 
 export const LobbyContext = createContext<Partial<LobbyContextProps>>({});
@@ -60,6 +61,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
   const [roundEndTimeStamp, setRoundEndTimeStamp] = useState<number | null>(
     null
   );
+  const [roundScoreboard, setRoundScoreboard] = useState<any>(null);
 
   useEffect(() => {
     function onMessage(msgObj: any) {
@@ -89,6 +91,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
         setWordToDraw(null);
         setUnmaskedWord(null);
         setRoundEndTimeStamp(null);
+        setRoundScoreboard(null);
 
         // we already set the drawinguser for the upcoming round in the 'roundEnd'. Here we just reset the wordoptions for the user that was drawing in the previous round
         if (stateUsername !== drawingUser) {
@@ -109,6 +112,9 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
 
         // unmask for the players that haven't guessed the word
         unmaskedWord === null && setUnmaskedWord(info?.unmaskedWord);
+
+        // set round scoreboard
+        setRoundScoreboard(info?.roundScoreboard);
       } else if (newStatus === 'gameOver') {
         // TODO if something specific has to be set here
       }
@@ -193,6 +199,7 @@ const LobbyProvider = (props: ILobbyProviderProps) => {
         roundWinners,
         unmaskedWord,
         roundEndTimeStamp,
+        roundScoreboard,
       }}
     >
       {props.children}

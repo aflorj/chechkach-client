@@ -1,6 +1,6 @@
 import { useContext, useEffect, useLayoutEffect, useRef } from 'react';
 import { DrawingBoardContext } from '../../providers/DrawingBoardProvider';
-import WordPicker from '../WordPicker/WordPicker';
+import CanvasOverlay from '../CanvasOverlay/CanvasOverlay';
 import { LobbyContext } from '../../providers/LobbyProvider';
 
 interface IMagicCanvasProps {
@@ -17,7 +17,7 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
     setLobbyName,
   } = useContext(DrawingBoardContext);
 
-  const { wordOptions } = useContext(LobbyContext);
+  const { wordOptions, roundScoreboard } = useContext(LobbyContext);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -37,7 +37,10 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
   }, [lobbyName]);
 
   return (
-    <div id="canvas-wrapper" className={wordOptions ? 'relative' : ''}>
+    <div
+      id="canvas-wrapper"
+      className={wordOptions || roundScoreboard ? 'relative' : ''}
+    >
       <canvas
         // style={{ background: 'url(/paper2.jpeg)' }}
         className="bg-white shadow-inner"
@@ -46,7 +49,9 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
       ></canvas>
-      {wordOptions && <WordPicker lobbyName={lobbyName} />}
+      {(wordOptions || roundScoreboard) && (
+        <CanvasOverlay lobbyName={lobbyName} />
+      )}
     </div>
   );
 }
