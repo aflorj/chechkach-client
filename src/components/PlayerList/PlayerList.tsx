@@ -10,7 +10,10 @@ export default function PlayerList() {
   }, [users]);
 
   return (
-    <div id="players-container" className="w-48 flex flex-col gap-1">
+    <div
+      id="players-container"
+      className="w-1/2 md:w-5/12 lg:w-48 flex flex-col gap-1 order-2 lg:order-1 ms-auto lg:ms-0 me-0 md:me-2 lg:me-0 pe-2 md:pe-0"
+    >
       {users?.map((user: any) => (
         <div className="px-2 py-1 border border-black bg-white">
           <div className="flex justify-between align-middle">

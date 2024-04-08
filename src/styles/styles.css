@@ -12,6 +12,7 @@ body,
 #root {
   /* background-image: url('background.png'); */
   background-color: #999;
+  overflow: auto;
 }
 
 #lobbies-container {

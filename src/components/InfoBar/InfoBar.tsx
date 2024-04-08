@@ -91,7 +91,7 @@ export default function InfoBar({
   return (
     <div
       id="infobar-container"
-      className="flex content-between mb-4 bg-white border border-black p-2 rounded"
+      className="flex content-between mb-2 md:mb-4 bg-white border border-black p-2 rounded"
     >
       <div>{roundEndTimeStamp && <CountDown lobbyName={lobbyName} />}</div>
       <div>{getInfoBarMessage()}</div>

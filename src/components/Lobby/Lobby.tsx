@@ -183,12 +183,12 @@ export default function Lobby() {
       </div>
     </div>
   ) : (
-    <div className="mx-auto">
+    <div className="mx-auto px-2 lg:px-0">
       <DrawingBoardProvider>
         <InfoBar lobbyName={lobbyName} />
-        <div className="flex">
+        <div className="flex flex-wrap lg:flex-nowrap">
           <PlayerList />
-          <div className="flex flex-col mx-4">
+          <div className="flex flex-col mx-auto lg:mx-4 order-1 lg:order-2 mb-2 md:mb-4">
             <MagicCanvas lobbyName={lobbyInfo?.name} />
             {allowedToDraw && <Palette />}
           </div>
