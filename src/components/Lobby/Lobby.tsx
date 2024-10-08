@@ -108,12 +108,12 @@ export default function Lobby() {
     console.log('gremo iskat lobbyinfo');
     axios({
       method: 'get',
-      url: `http://localhost:9030/api/getLobby/${lobbyName}`,
+      url: `http://localhost:9444/api/lobbies/${lobbyName}`,
     })
       .then((res) => {
         console.log('successfull getLobby fetch: ', res?.data);
-        setLobbyInfo(res?.data?.lobbyInfo);
-        setLobbyStatus!(res?.data?.lobbyInfo?.status);
+        setLobbyInfo(res?.data);
+        setLobbyStatus!(res?.data?.status);
       })
       .catch((err) => {
         console.error('ta error pri getLobby: ', err);

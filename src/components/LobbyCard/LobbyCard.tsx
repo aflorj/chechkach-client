@@ -16,7 +16,7 @@ export default function LobbyCard({ lobby }: ILobbyCardProps) {
 
     axios({
       method: 'post',
-      url: 'http://localhost:9030/api/joinLobby/',
+      url: 'http://localhost:9444/api/lobbies/join',
       // headers: {},
       data: {
         lobbyName: lobby?.name,

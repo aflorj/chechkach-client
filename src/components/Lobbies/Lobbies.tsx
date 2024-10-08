@@ -4,8 +4,12 @@ import { useNavigate } from 'react-router';
 import LobbyCard from '../LobbyCard/LobbyCard';
 import Button from '../Button/Button';
 import { motion } from 'framer-motion';
+import { LobbiesApi } from '../../generated-client';
+import { configuration } from '../../apiConfiguration';
 
 export default function Lobbies() {
+  const lobbiesApi = new LobbiesApi(configuration);
+
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -16,12 +20,12 @@ export default function Lobbies() {
   const [isFocused, setIsFocused] = useState(false);
 
   const fetchLobbies = () => {
-    axios
-      .get('http://localhost:9030/api/getAllLobbies')
+    lobbiesApi
+      .findAll()
       .then((res) => {
         setIsLoading(false);
-        console.log('lobbies:', res?.data?.lobbies);
-        setLobbies(res?.data?.lobbies);
+        console.log('lobbies:', res?.data);
+        setLobbies(res?.data);
       })
       .catch((err) => {
         setIsLoading(false);
@@ -31,37 +35,51 @@ export default function Lobbies() {
   };
 
   const createLobby = () => {
-    axios({
-      method: 'post',
-      url: 'http://localhost:9030/api/createLobby',
-      // headers: {},
-      data: {
-        lobbyName: lobbyName,
-        // posljemo tud svoje ime?
-      },
-    })
+    lobbiesApi
+      .create({
+        lobbyName: 'test',
+        password: 'test',
+        private: true,
+      })
       .then((res) => {
         console.log('createLobby response: ', res);
         // ze tu ujamemo ce ni kul ?
-        navigate(`/lobby/${res?.data?.lobbyName}`);
+        navigate(`/lobby/${res?.data?.name}`);
       })
       .catch((err) => {
         console.error('ta error pri kreaciji: ', err);
       });
+    // axios({
+    //   method: 'post',
+    //   url: 'http://localhost:9444/api/lobbies',
+    //   // headers: {},
+    //   data: {
+    //     lobbyName: lobbyName,
+    //     // posljemo tud svoje ime?
+    //   },
+    // })
+    //   .then((res) => {
+    //     console.log('createLobby response: ', res);
+    //     // ze tu ujamemo ce ni kul ?
+    //     navigate(`/lobby/${res?.data?.name}`);
+    //   })
+    //   .catch((err) => {
+    //     console.error('ta error pri kreaciji: ', err);
+    //   });
   };
 
   useEffect(() => {
     fetchLobbies();
   }, []);
 
-  useEffect(() => {
-    console.log('lobbies:  ', lobbies);
-  }, [lobbies]);
+  // useEffect(() => {
+  //   console.log('lobbies:  ', lobbies);
+  // }, [lobbies]);
 
   return (
     <div
       id="lobbies-container"
-      className="bg-transparent mx-auto rounded px-4 lg:px-0"
+      className="bg-transparent mx-auto rounded-3xl px-4 lg:px-0"
     >
       <div
         id="title-zone"
