@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import LobbyCard from '../LobbyCard/LobbyCard';
 import Button from '../Button/Button';
 import { motion } from 'framer-motion';
-import { LobbiesApi } from '../../generated-client';
+import { LobbiesApi } from '@aflorj/chechkach-openapi-ts-client';
 import { configuration } from '../../apiConfiguration';
 
 export default function Lobbies() {

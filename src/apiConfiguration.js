@@ -1,7 +1,7 @@
-import { Configuration } from './generated-client';
+import { Configuration } from '@aflorj/chechkach-openapi-ts-client';
 
 const configuration = new Configuration({
-  basePath: '',
+  basePath: '/api',
 });
 
 export { configuration };
