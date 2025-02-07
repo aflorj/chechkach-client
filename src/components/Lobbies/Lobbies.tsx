@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import LobbyCard from '../LobbyCard/LobbyCard';
@@ -37,7 +36,7 @@ export default function Lobbies() {
   const createLobby = () => {
     lobbiesApi
       .create({
-        lobbyName: 'test',
+        lobbyName: lobbyName,
         password: 'test',
         private: true,
       })
@@ -49,23 +48,6 @@ export default function Lobbies() {
       .catch((err) => {
         console.error('ta error pri kreaciji: ', err);
       });
-    // axios({
-    //   method: 'post',
-    //   url: 'http://localhost:9444/api/lobbies',
-    //   // headers: {},
-    //   data: {
-    //     lobbyName: lobbyName,
-    //     // posljemo tud svoje ime?
-    //   },
-    // })
-    //   .then((res) => {
-    //     console.log('createLobby response: ', res);
-    //     // ze tu ujamemo ce ni kul ?
-    //     navigate(`/lobby/${res?.data?.name}`);
-    //   })
-    //   .catch((err) => {
-    //     console.error('ta error pri kreaciji: ', err);
-    //   });
   };
 
   useEffect(() => {
@@ -79,7 +61,7 @@ export default function Lobbies() {
   return (
     <div
       id="lobbies-container"
-      className="bg-transparent mx-auto rounded-3xl px-4 lg:px-0"
+      className="container max-w-[1024px] bg-transparent mx-auto rounded-3xl px-4 lg:px-0"
     >
       <div
         id="title-zone"

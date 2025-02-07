@@ -2,41 +2,36 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { motion } from 'framer-motion';
+import { LobbiesApi } from '@aflorj/chechkach-openapi-ts-client';
+import { configuration } from '../../apiConfiguration';
 
 interface ILobbyCardProps {
   lobby: any;
 }
 
 export default function LobbyCard({ lobby }: ILobbyCardProps) {
+  const lobbiesApi = new LobbiesApi(configuration);
+
   const navigate = useNavigate();
   const [isJoining, setIsJoining] = useState(false);
 
   const attemptToJoinJobby = () => {
     setIsJoining(true);
 
-    axios({
-      method: 'post',
-      url: 'http://localhost:9444/api/lobbies/join',
-      // headers: {},
-      data: {
+    lobbiesApi
+      .join({
         lobbyName: lobby?.name,
-        // send socketId to check if we are already in this (or any other?) lobby
-        lastKnownSocketId: localStorage?.getItem('localSocketId'),
-      },
-    })
+        lastKnownSocketId: localStorage?.getItem('localSocketId')!,
+      })
       .then((res) => {
-        if (res?.data?.full) {
-          // display full lobbby message
-        } else {
-          setIsJoining(false);
-          console.log('join res: ', res);
-          navigate(`/lobby/${lobby?.name}`, {
-            state: res?.data?.lobbyInfo,
-          });
-        }
+        setIsJoining(false);
+        console.log('join res: ', res);
+        navigate(`/lobby/${lobby?.name}`, {
+          state: res?.data?.gameState,
+        });
       })
       .catch((err) => {
-        console.error('ta error pri joinu: ', err);
+        console.error(err?.response?.data?.message);
         setIsJoining(false);
       });
   };

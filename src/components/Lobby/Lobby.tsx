@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { socket } from '../../socket';
-import axios from 'axios';
 import DrawingBoardProvider from '../../providers/DrawingBoardProvider';
 import MagicCanvas from '../MagicCanvas/MagicCanvas';
 import { LobbyContext } from '../../providers/LobbyProvider';
@@ -9,8 +8,12 @@ import InfoBar from '../InfoBar/InfoBar';
 import Chat from '../Chat/Chat';
 import PlayerList from '../PlayerList/PlayerList';
 import Palette from '../Palette/Palette';
+import { LobbiesApi } from '@aflorj/chechkach-openapi-ts-client';
+import { configuration } from '../../apiConfiguration';
 
 export default function Lobby() {
+  const lobbiesApi = new LobbiesApi(configuration);
+
   const navigate = useNavigate();
 
   const {
@@ -106,10 +109,8 @@ export default function Lobby() {
 
   const getLobbyInfo = () => {
     console.log('gremo iskat lobbyinfo');
-    axios({
-      method: 'get',
-      url: `http://localhost:9444/api/lobbies/${lobbyName}`,
-    })
+    lobbiesApi
+      .findOne(lobbyName!)
       .then((res) => {
         console.log('successfull getLobby fetch: ', res?.data);
         setLobbyInfo(res?.data);
@@ -117,6 +118,10 @@ export default function Lobby() {
       })
       .catch((err) => {
         console.error('ta error pri getLobby: ', err);
+        if (err?.response?.data?.statusCode === 404) {
+          // TODO alert user that the lobby doesn't exist
+          navigate('/lobbies');
+        }
       });
   };
 
@@ -135,11 +140,15 @@ export default function Lobby() {
     lobbyStatus === undefined && getLobbyInfo();
   }, []);
 
+  // useEffect(() => {
+  //   console.log('isLoading state: ', isLoading);
+  // }, [isLoading]);
+
   return isLoading ? (
     <>Loading...</>
   ) : lobbyStatus === 'open' ? (
-    <div className="h-screen pt-8">
-      <div className="md:w-1/2 mx-auto p-4 bg-purple-100">
+    <div className="container max-w-[1024px] h-screen pt-8 px-4 lg:px-0">
+      <div className="bg-purple-100  mx-auto rounded-3xl p-2">
         <div className="text-3xl flex justify-between">
           <div>
             {lobbyInfo?.name} ({lobbyStatus})
@@ -157,11 +166,12 @@ export default function Lobby() {
         <div className="bg-purple-50 rounded-md mt-4">
           {users?.map((user: any) => (
             <div>
-              {user?.playerId} {user?.isOwner && <>♛</>}
+              {user?.playerId} {user?.isOwner && <>♛</>}{' '}
+              {isConnected ? 'connected' : 'not connected'}
             </div>
           ))}
         </div>
-        <div>{isConnected ? 'connected' : 'not connected'} </div>
+
         <br />
         <div>
           <div>

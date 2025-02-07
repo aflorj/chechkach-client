@@ -11,11 +11,6 @@ body,
 
 #root {
   /* background-image: url('background.png'); */
-  background-color: #f9f5f2;
+  /* background-color: #f9f5f2; */
   overflow: auto;
-}
-
-#lobbies-container {
-  width: 100%;
-  max-width: 1024px;
 }

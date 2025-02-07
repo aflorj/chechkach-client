@@ -24,7 +24,6 @@ function App() {
     <div className="flex pt-4 md:pt-10">
       <Routes>
         <Route path="/" element={stateUsername ? <Lobbies /> : <Landing />} />
-        {/* <Route path="/lobbies" element={<Lobbies />} /> */}
         <Route path="/lobby/:lobbyName" element={<Lobby />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
