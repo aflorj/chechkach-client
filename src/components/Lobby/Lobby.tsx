@@ -137,12 +137,21 @@ export default function Lobby() {
   // }, []);
 
   useEffect(() => {
-    lobbyStatus === undefined && getLobbyInfo();
+    // lobbyStatus === undefined && getLobbyInfo();
+    getLobbyInfo();
+
+    return () => {
+      socket.disconnect(); // unmounting this view equals disconnect
+    };
   }, []);
 
   // useEffect(() => {
   //   console.log('isLoading state: ', isLoading);
   // }, [isLoading]);
+
+  // useEffect(() => {
+  //   console.log('lobby info: ', lobbyInfo);
+  // }, [lobbyInfo]);
 
   return isLoading ? (
     <>Loading...</>
