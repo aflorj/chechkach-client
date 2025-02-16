@@ -65,7 +65,7 @@ export default function Lobbies() {
     >
       <div
         id="title-zone"
-        className="flex justify-between bg-white rounded p-2 border border-black"
+        className="flex justify-between bg-white rounded-sm p-2 border border-black"
       >
         <div>Pridruži se igri</div>
         <Button
@@ -87,7 +87,7 @@ export default function Lobbies() {
           ) : lobbies?.length > 0 ? (
             lobbies.map((lobby: any) => <LobbyCard lobby={lobby} />)
           ) : (
-            <div className="bg-white w-100 h-12 border border-black rounded flex">
+            <div className="bg-white w-100 h-12 border border-black rounded-sm flex">
               <div className="m-auto">Na voljo ni nobene igre. :(</div>
             </div>
           )}
@@ -105,12 +105,12 @@ export default function Lobbies() {
               onChange={(e) => setLobbyName(e?.target?.value)}
               type="text"
               id="room_name"
-              className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-hidden focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
             />
             <label
               htmlFor="room_name"
-              className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-gray-500 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
+              className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-gray-500 dark:peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:rtl:translate-x-1/4 peer-focus:rtl:left-auto start-1"
             >
               Ime sobe
             </label>

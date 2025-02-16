@@ -34,7 +34,7 @@ export default function Chat({ lobbyName }: any) {
   return (
     <div
       id="chat-container"
-      className="flex flex-col justify-between bg-white border border-black rounded w-1/2 md:w-5/12 lg:w-60 order-3 me-auto lg:me-0 ms-0 md:ms-2 lg:ms-0 mb-4"
+      className="flex flex-col justify-between bg-white border border-black rounded-sm w-1/2 md:w-5/12 lg:w-60 order-3 me-auto lg:me-0 ms-0 md:ms-2 lg:ms-0 mb-4"
       style={{ height: '32rem' }}
     >
       <div className="overflow-y-auto">

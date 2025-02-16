@@ -171,14 +171,14 @@ export default function Landing() {
           <div className="flex mb-2">
             <div>Username:</div>
             <input
-              className="shadow appearance-none border rounded ms-2"
+              className="shadow-sm appearance-none border rounded-sm ms-2"
               {...register('userName', { required: true })}
             />
           </div>
           {errors?.userName && <small className="text-danger">Required</small>}
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm"
           >
             Check lobbies
           </button>

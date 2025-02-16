@@ -34,7 +34,7 @@ export default function Button({
       disabled={isDisabled}
       className={clsx(
         variantClasses(variant),
-        'text-white rounded block py-2 px-4',
+        'text-white rounded-sm block py-2 px-4',
         className && className
       )}
     >

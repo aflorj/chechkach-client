@@ -34,7 +34,7 @@ export default function CanvasOverlay({ lobbyName }: any) {
               {wordOptions?.map((word: string) => (
                 <div
                   onClick={() => pickWord(word)}
-                  className="cursor-pointer border border-black hover:border-lime-300 rounded py-2 px-4 bg-black text-white hover:text-lime-300"
+                  className="cursor-pointer border border-black hover:border-lime-300 rounded-sm py-2 px-4 bg-black text-white hover:text-lime-300"
                 >
                   {word}
                 </div>
