@@ -21,7 +21,7 @@ function App() {
   }, [searchParams]);
 
   return (
-    <div className="flex pt-4 md:pt-10">
+    <div className="flex pt-4 md:pt-10 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <Routes>
         <Route path="/" element={stateUsername ? <Lobbies /> : <Landing />} />
         <Route path="/lobby/:lobbyName" element={<Lobby />} />

@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { LobbyContext } from '../../providers/LobbyProvider';
 import CountDown from '../CountDown/CountDown';
+import { motion } from 'motion/react';
 
 export default function InfoBar({
   lobbyName,
@@ -21,80 +22,150 @@ export default function InfoBar({
     switch (lobbyStatus) {
       case 'pickingWord':
         return (
-          <p>
-            {stateUsername === drawingUser
-              ? 'Choose a word to draw'
-              : `${drawingUser} is choosing a word to draw`}
-          </p>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
+            <p className="text-gray-700">
+              {stateUsername === drawingUser
+                ? 'Izberi besedo za risanje'
+                : `${drawingUser} izbira besedo za risanje`}
+            </p>
+          </div>
         );
       case 'playing':
         return wordToDraw ? (
-          `You are drawing ${wordToDraw}`
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-gray-700">
+              Rišeš:{' '}
+              <span className="font-semibold text-blue-600">{wordToDraw}</span>
+            </span>
+          </div>
         ) : (
-          <div className="flex">
-            {unmaskedWord ? (
-              <>
-                {unmaskedWord?.split(' ')?.map((word: string) => (
-                  <>
-                    <div className="me-1">{word}</div>
-                    <div
-                      className="me-2"
-                      style={{ verticalAlign: 'super', fontSize: '0.75rem' }}
-                    >
-                      {word?.length}
-                    </div>
-                  </>
-                ))}
-              </>
-            ) : (
-              <>
-                {maskedWord?.split(' ')?.map((word: string) => (
-                  <>
-                    <div className="flex">
-                      {word?.split('')?.map((char: string) => (
-                        <div className="me-1">{char}</div>
-                      ))}
-                    </div>
-                    <div
-                      className="me-2"
-                      style={{ verticalAlign: 'super', fontSize: '0.75rem' }}
-                    >
-                      {word?.length}
-                    </div>
-                  </>
-                ))}
-              </>
-            )}
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+            <div className="flex items-center gap-1">
+              {unmaskedWord ? (
+                <>
+                  {unmaskedWord
+                    ?.split(' ')
+                    ?.map((word: string, index: number) => (
+                      <div key={index} className="flex items-baseline gap-1">
+                        <span className="text-gray-700 font-medium">
+                          {word}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {word?.length}
+                        </span>
+                      </div>
+                    ))}
+                </>
+              ) : (
+                <>
+                  {maskedWord
+                    ?.split(' ')
+                    ?.map((word: string, wordIndex: number) => (
+                      <div
+                        key={wordIndex}
+                        className="flex items-baseline gap-1"
+                      >
+                        <div className="flex gap-1">
+                          {word
+                            ?.split('')
+                            ?.map((char: string, charIndex: number) => (
+                              <div
+                                key={charIndex}
+                                className="w-4 h-6 bg-gray-300 rounded flex items-center justify-center"
+                              >
+                                <span className="text-gray-600 font-mono text-sm">
+                                  {char}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                        <span className="text-xs text-gray-500">
+                          {word?.length}
+                        </span>
+                      </div>
+                    ))}
+                </>
+              )}
+            </div>
           </div>
         );
       case 'roundOver':
         return (
-          <>
-            {unmaskedWord?.split(' ')?.map((word: string) => (
-              <div className="flex">
-                <div className="me-1">{word}</div>
-                <div
-                  className="me-2"
-                  style={{ verticalAlign: 'super', fontSize: '0.75rem' }}
-                >
-                  {word?.length}
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-purple-500 rounded-full" />
+            <div className="flex items-center gap-1">
+              {unmaskedWord?.split(' ')?.map((word: string, index: number) => (
+                <div key={index} className="flex items-baseline gap-1">
+                  <span className="text-gray-700 font-medium">{word}</span>
+                  <span className="text-xs text-gray-500">{word?.length}</span>
                 </div>
-              </div>
-            ))}
-          </>
+              ))}
+            </div>
+          </div>
         );
       case 'gameOver':
-        return <>Game over</>;
+        return (
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-red-500 rounded-full" />
+            <span className="text-gray-700 font-semibold">Igra končana</span>
+          </div>
+        );
     }
   };
 
   return (
-    <div
-      id="infobar-container"
-      className="flex content-between mb-2 md:mb-4 bg-white border border-black p-2 rounded-sm"
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="mb-4"
     >
-      <div>{roundEndTimeStamp && <CountDown lobbyName={lobbyName} />}</div>
-      <div>{getInfoBarMessage()}</div>
-    </div>
+      <div className="bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl p-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <svg
+                className="w-5 h-5 text-blue-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+              <span className="text-sm font-medium text-gray-600">
+                Soba: {lobbyName}
+              </span>
+            </div>
+            {roundEndTimeStamp && (
+              <div className="flex items-center gap-2">
+                <svg
+                  className="w-5 h-5 text-red-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <CountDown lobbyName={lobbyName} />
+              </div>
+            )}
+          </div>
+          <div className="text-center sm:text-right">{getInfoBarMessage()}</div>
+        </div>
+      </div>
+    </motion.div>
   );
 }

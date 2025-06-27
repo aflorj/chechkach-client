@@ -57,7 +57,7 @@ const DrawingBoardProvider = (props: DBPProps) => {
   const [brushSize, setBrushSize] = useState(10);
   const [lobbyName, setLobbyName] = useState<string>();
   const [canUndo, setCanUndo] = useState(false);
-  const [activeTool, setActiveTool] = useState('bucket');
+  const [activeTool, setActiveTool] = useState('brush');
 
   useEffect(() => {
     if (ctx) {
@@ -130,9 +130,15 @@ const DrawingBoardProvider = (props: DBPProps) => {
       return;
     }
 
+    const rect = ctx.canvas.getBoundingClientRect();
+    const scaleX = ctx.canvas.width / rect.width;
+    const scaleY = ctx.canvas.height / rect.height;
+    const x = (ev.clientX - rect.left) * scaleX;
+    const y = (ev.clientY - rect.top) * scaleY;
+
     const newLine = {
-      x: ev.clientX - ctx.canvas.offsetLeft,
-      y: ev.clientY - ctx.canvas.offsetTop,
+      x,
+      y,
       color,
       brushSize,
       isEnding,
@@ -158,12 +164,37 @@ const DrawingBoardProvider = (props: DBPProps) => {
 
   const fill = (ev: BoardEvent | null, fillInfo: any | null) => {
     if (ctx) {
-      let startX = ev ? ev.clientX - ctx.canvas.offsetLeft : fillInfo.startX;
-      let startY = ev ? ev.clientY - ctx.canvas.offsetTop : fillInfo.startY;
-      let colorLayer = ctx.getImageData(0, 0, 700, 500);
+      let startX, startY;
+      if (ev) {
+        const rect = ctx.canvas.getBoundingClientRect();
+        const scaleX = ctx.canvas.width / rect.width;
+        const scaleY = ctx.canvas.height / rect.height;
+        startX = Math.floor((ev.clientX - rect.left) * scaleX);
+        startY = Math.floor((ev.clientY - rect.top) * scaleY);
+      } else {
+        startX = Math.floor(fillInfo.startX);
+        startY = Math.floor(fillInfo.startY);
+      }
+
+      // Bounds checking to prevent crashes
+      if (
+        startX < 0 ||
+        startX >= ctx.canvas.width ||
+        startY < 0 ||
+        startY >= ctx.canvas.height
+      ) {
+        return;
+      }
+
+      let colorLayer = ctx.getImageData(
+        0,
+        0,
+        ctx.canvas.width,
+        ctx.canvas.height
+      );
 
       // starting position
-      let startPos = (startY * 700 + startX) * 4;
+      let startPos = (startY * ctx.canvas.width + startX) * 4;
 
       // color of the clicked pixel
       let startR = colorLayer.data[startPos];
@@ -173,11 +204,15 @@ const DrawingBoardProvider = (props: DBPProps) => {
       // active color hex -> rgb
       let activeColorRGB = ev ? hexToRgb(color) : fillInfo.color;
 
+      if (!activeColorRGB) {
+        return; // Invalid color
+      }
+
       // exit immediately if the color of the clicked pixel matches our active color
       if (
-        startR === activeColorRGB!.r &&
-        startG === activeColorRGB!.g &&
-        startB === activeColorRGB!.b
+        startR === activeColorRGB.r &&
+        startG === activeColorRGB.g &&
+        startB === activeColorRGB.b
       ) {
         return;
       }
@@ -186,7 +221,7 @@ const DrawingBoardProvider = (props: DBPProps) => {
       if (ev) {
         socket.emit('fill', {
           fillInfo: {
-            color: hexToRgb(color),
+            color: activeColorRGB,
             startX: startX,
             startY: startY,
           },
@@ -197,12 +232,19 @@ const DrawingBoardProvider = (props: DBPProps) => {
       let pixelStack = [[startX, startY]];
 
       while (pixelStack.length) {
-        const canvasWidth = 700;
-        const canvasHeight = 500;
+        const canvasWidth = ctx.canvas.width;
+        const canvasHeight = ctx.canvas.height;
         var newPos, x, y, pixelPos, reachLeft, reachRight;
         newPos = pixelStack.pop();
-        x = newPos![0];
-        y = newPos![1];
+        if (!newPos) continue;
+
+        x = newPos[0];
+        y = newPos[1];
+
+        // Additional bounds checking
+        if (x < 0 || x >= canvasWidth || y < 0 || y >= canvasHeight) {
+          continue;
+        }
 
         pixelPos = (y * canvasWidth + x) * 4;
         while (y-- >= 0 && matchStartColor(pixelPos)) {
@@ -242,10 +284,13 @@ const DrawingBoardProvider = (props: DBPProps) => {
         }
       }
 
-      // aplly the coloring to the canvas
+      // apply the coloring to the canvas
       ctx.putImageData(colorLayer, 0, 0);
 
       function matchStartColor(pixelPos: any) {
+        if (pixelPos < 0 || pixelPos >= colorLayer.data.length - 3) {
+          return false;
+        }
         var r = colorLayer.data[pixelPos];
         var g = colorLayer.data[pixelPos + 1];
         var b = colorLayer.data[pixelPos + 2];
@@ -254,9 +299,12 @@ const DrawingBoardProvider = (props: DBPProps) => {
       }
 
       function colorPixel(pixelPos: any) {
-        colorLayer.data[pixelPos] = activeColorRGB!.r;
-        colorLayer.data[pixelPos + 1] = activeColorRGB!.g;
-        colorLayer.data[pixelPos + 2] = activeColorRGB!.b;
+        if (pixelPos < 0 || pixelPos >= colorLayer.data.length - 3) {
+          return;
+        }
+        colorLayer.data[pixelPos] = activeColorRGB.r;
+        colorLayer.data[pixelPos + 1] = activeColorRGB.g;
+        colorLayer.data[pixelPos + 2] = activeColorRGB.b;
         colorLayer.data[pixelPos + 3] = 255;
       }
     }

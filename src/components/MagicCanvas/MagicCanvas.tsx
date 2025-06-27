@@ -2,6 +2,8 @@ import { useContext, useEffect, useLayoutEffect, useRef } from 'react';
 import { DrawingBoardContext } from '../../providers/DrawingBoardProvider';
 import CanvasOverlay from '../CanvasOverlay/CanvasOverlay';
 import { LobbyContext } from '../../providers/LobbyProvider';
+import { motion } from 'motion/react';
+import clsx from 'clsx';
 
 interface IMagicCanvasProps {
   lobbyName: string;
@@ -17,9 +19,26 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
     setLobbyName,
   } = useContext(DrawingBoardContext);
 
-  const { wordOptions, roundScoreboard } = useContext(LobbyContext);
+  const { wordOptions, roundScoreboard, allowedToDraw } =
+    useContext(LobbyContext);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Brush size labels mapping
+  const getBrushSizeLabel = (size: number) => {
+    switch (size) {
+      case 1:
+        return 'Tanek';
+      case 4:
+        return 'Srednji';
+      case 8:
+        return 'Debel';
+      case 16:
+        return 'Zelo debel';
+      default:
+        return 'Srednji';
+    }
+  };
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current as HTMLCanvasElement;
@@ -37,21 +56,74 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
   }, [lobbyName]);
 
   return (
-    <div
-      id="canvas-wrapper"
-      className={wordOptions || roundScoreboard ? 'relative' : ''}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6 }}
+      className="flex flex-col items-center"
     >
-      <canvas
-        // style={{ background: 'url(/paper2.jpeg)' }}
-        className="bg-white shadow-inner"
-        ref={canvasRef}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
-      ></canvas>
-      {(wordOptions || roundScoreboard) && (
-        <CanvasOverlay lobbyName={lobbyName} />
-      )}
-    </div>
+      <div
+        id="canvas-wrapper"
+        className={clsx(
+          'relative',
+          wordOptions || roundScoreboard ? 'mb-4' : ''
+        )}
+      >
+        {/* Canvas Container */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-4">
+          <canvas
+            className="bg-white rounded-xl shadow-inner border border-gray-200 cursor-crosshair transition-all duration-300 hover:shadow-lg"
+            ref={canvasRef}
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
+            onMouseMove={handleMouseMove}
+            style={{
+              background:
+                'linear-gradient(45deg, #f8fafc 25%, transparent 25%), linear-gradient(-45deg, #f8fafc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8fafc 75%), linear-gradient(-45deg, transparent 75%, #f8fafc 75%)',
+              backgroundSize: '20px 20px',
+              backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+            }}
+          />
+
+          {/* Canvas Info - Only show for users who can draw */}
+          {allowedToDraw && (
+            <div className="mt-3 flex items-center justify-between text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                  />
+                </svg>
+                <span>Risalna površina</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-gray-300 rounded-full" />
+                <span>Čopič: {getBrushSizeLabel(brushSize || 4)}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Overlay for word options or scoreboard */}
+        {(wordOptions || roundScoreboard) && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <CanvasOverlay lobbyName={lobbyName} />
+          </motion.div>
+        )}
+      </div>
+    </motion.div>
   );
 }
