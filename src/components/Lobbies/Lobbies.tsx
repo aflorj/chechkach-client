@@ -151,7 +151,7 @@ export default function Lobbies() {
               ) : lobbies?.length > 0 ? (
                 <div className="space-y-3">
                   <AnimatePresence>
-                    {lobbies.map((lobby: any, index: number) => (
+                    {lobbies?.map((lobby: any, index: number) => (
                       <motion.div
                         key={lobby.id || index}
                         initial={{ opacity: 0, y: 20 }}
