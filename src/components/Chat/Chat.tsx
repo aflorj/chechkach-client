@@ -5,6 +5,7 @@ import Message from './Message';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'motion/react';
 import Button from '../Button/Button';
+import { useTranslation } from 'react-i18next';
 
 export default function Chat({ lobbyName }: any) {
   const inputRef = useRef<any>(null);
@@ -12,6 +13,8 @@ export default function Chat({ lobbyName }: any) {
   const { stateUsername, messageHistory } = useContext(LobbyContext);
 
   const [msg, setMsg] = useState('');
+
+  const { t } = useTranslation();
 
   const sendMessage = () => {
     if (msg?.trim()) {
@@ -58,9 +61,14 @@ export default function Chat({ lobbyName }: any) {
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
               />
             </svg>
-            Pogovor
+            {t('chat.chat', 'Chat')}
           </h2>
-          <p className="text-sm text-gray-500 mt-1">Soba: {lobbyName}</p>
+          <p className="text-sm text-gray-500 mt-1">
+            {t('chat.room', {
+              room: lobbyName,
+              defaultValue: `Room: ${lobbyName}`,
+            })}
+          </p>
         </div>
 
         {/* Messages Container */}
@@ -97,8 +105,10 @@ export default function Chat({ lobbyName }: any) {
                     d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                   />
                 </svg>
-                <p>Ni sporočil</p>
-                <p className="text-sm">Začni pogovor!</p>
+                <p>{t('chat.no_messages', 'No messages')}</p>
+                <p className="text-sm">
+                  {t('chat.start_conversation', 'Start the conversation!')}
+                </p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -109,7 +119,10 @@ export default function Chat({ lobbyName }: any) {
           <div className="flex gap-3">
             <input
               ref={inputRef}
-              placeholder="Napiši sporočilo..."
+              placeholder={t(
+                'chat.send_message_placeholder',
+                'Type a message...'
+              )}
               className="flex-1 px-4 py-3 bg-white/50 backdrop-blur-sm rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 transition-all duration-300 outline-none text-sm"
               value={msg}
               onChange={(e) => setMsg(e?.target?.value)}

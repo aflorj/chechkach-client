@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { LobbyContext } from '../../providers/LobbyProvider';
 import { Line } from '../../providers/DrawingBoardProvider';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 type BoardEvent = React.MouseEvent<HTMLCanvasElement, MouseEvent>;
 
@@ -31,6 +32,7 @@ export default function Landing() {
   const avatarCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const { stateUsername, setStateUsername } = useContext(LobbyContext);
+  const { t } = useTranslation();
 
   const colorOptions = [
     { name: 'black', hex: '#000000' },
@@ -304,7 +306,7 @@ export default function Landing() {
                 onClick={() => undo()}
                 disabled={!canUndo}
                 className="absolute top-0 right-0 w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-md disabled:from-gray-300 disabled:to-gray-400 disabled:text-gray-400 disabled:cursor-not-allowed transition-all duration-200 z-10"
-                title="Razveljavi (Undo)"
+                title={t('landing.undo', 'Undo')}
               >
                 <svg
                   className="w-4 h-4"
@@ -321,7 +323,7 @@ export default function Landing() {
                 </svg>
               </button>
               <div className="text-lg font-semibold text-gray-700 mb-2">
-                Nariši svoj avatar
+                {t('landing.draw_avatar', 'Draw your avatar')}
               </div>
               <canvas
                 className="border border-gray-300 rounded-xl shadow-inner bg-white w-60 h-60 cursor-crosshair"
@@ -337,7 +339,7 @@ export default function Landing() {
             {/* Tool Selector */}
             <div className="w-full mt-2">
               <h4 className="text-sm font-medium text-gray-700 mb-1.5">
-                Orodja
+                {t('landing.tools', 'Tools')}
               </h4>
               <div className="flex gap-1 mb-2">
                 <button
@@ -350,7 +352,9 @@ export default function Landing() {
                   aria-label="Čopič"
                 >
                   <span className="text-sm">🖌️</span>
-                  <span className="hidden sm:inline">Čopič</span>
+                  <span className="hidden sm:inline">
+                    {t('landing.brush', 'Brush')}
+                  </span>
                 </button>
                 <button
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-1 ${
@@ -362,14 +366,16 @@ export default function Landing() {
                   aria-label="Barva"
                 >
                   <span className="text-sm">🪣</span>
-                  <span className="hidden sm:inline">Barva</span>
+                  <span className="hidden sm:inline">
+                    {t('landing.bucket', 'Fill')}
+                  </span>
                 </button>
               </div>
             </div>
             {/* Color Palette - Responsive Grid */}
             <div className="w-full">
               <h4 className="text-sm font-medium text-gray-700 mb-1.5">
-                Barve
+                {t('landing.colors', 'Colors')}
               </h4>
               <div className="grid grid-cols-6 sm:grid-cols-9 md:grid-cols-12 lg:grid-cols-18 gap-1">
                 {colorOptions.map((colorOption, idx) => (
@@ -398,7 +404,7 @@ export default function Landing() {
             {/* Brush Sizes - Compact Row */}
             <div className="w-full mt-2">
               <h4 className="text-sm font-medium text-gray-700 mb-1.5">
-                Čopič
+                {t('landing.brush', 'Brush')}
               </h4>
               <div className="flex gap-1">
                 {sizeOptions.map((sizeOption) => (
@@ -419,7 +425,14 @@ export default function Landing() {
                         height: Math.min(sizeOption.size * 1.5, 16),
                       }}
                     />
-                    <span className="hidden sm:inline">{sizeOption.label}</span>
+                    <span className="hidden sm:inline">
+                      {t(
+                        `landing.brush_sizes.${sizeOption.label
+                          .toLowerCase()
+                          .replace(/ /g, '_')}`,
+                        sizeOption.label
+                      )}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -431,18 +444,21 @@ export default function Landing() {
             >
               <div className="flex flex-col gap-2">
                 <label htmlFor="userName" className="text-gray-700 font-medium">
-                  Uporabniško ime
+                  {t('landing.username_label', 'Username')}
                 </label>
                 <input
                   id="userName"
                   className="px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 transition-all outline-none text-lg bg-white/70 shadow"
                   {...register('userName', { required: true })}
                   autoComplete="off"
-                  placeholder="Vnesi ime..."
+                  placeholder={t(
+                    'landing.username_placeholder',
+                    'Enter your name...'
+                  )}
                 />
                 {errors?.userName && (
                   <span className="text-red-500 text-sm">
-                    To polje je obvezno
+                    {t('landing.username_required', 'This field is required')}
                   </span>
                 )}
               </div>
@@ -450,7 +466,7 @@ export default function Landing() {
                 type="submit"
                 className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg text-lg transition-all duration-300"
               >
-                Prikaži sobe
+                {t('landing.show_lobbies', 'Show lobbies')}
               </button>
             </form>
           </div>

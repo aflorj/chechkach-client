@@ -1,0 +1,88 @@
+{
+  "landing": {
+    "draw_avatar": "Nacrtaj svoj avatar",
+    "undo": "Poništi",
+    "tools": "Alati",
+    "brush": "Kist",
+    "bucket": "Kanta",
+    "colors": "Boje",
+    "brush_sizes": {
+      "thin": "Tanki",
+      "medium": "Srednji",
+      "thick": "Debeli",
+      "extra_thick": "Vrlo debeli"
+    },
+    "username_label": "Korisničko ime",
+    "username_placeholder": "Unesi ime...",
+    "username_required": "Ovo polje je obavezno",
+    "show_lobbies": "Prikaži lobije"
+  },
+  "palette": {
+    "palette_title": "Paleta alata",
+    "undo": "Poništi",
+    "colors": "Boje",
+    "brush": "Kist",
+    "tools": "Alati",
+    "bucket": "Kanta",
+    "brush_sizes": {
+      "thin": "Tanki",
+      "medium": "Srednji",
+      "thick": "Debeli",
+      "extra_thick": "Vrlo debeli"
+    }
+  },
+  "lobbies": {
+    "join_the_game": "Pridruži se lobiju!",
+    "find_or_create": "Pronađi postojeći lobi ili stvori novi",
+    "refresh": "Osvježi",
+    "available_games": "Dostupni lobiji",
+    "no_games": "Nema dostupnih lobija",
+    "create_first_game": "Stvori prvi lobi dolje!",
+    "create_new_game": "Stvori novi lobi",
+    "room_name": "Ime lobija",
+    "create_game": "Stvori lobi"
+  },
+  "lobby": {
+    "connected": "Povezan",
+    "not_connected": "Nije povezan",
+    "players": "Igrači",
+    "start_game": "Započni rundu",
+    "starting": "Započinje...",
+    "chat": "Razgovor",
+    "no_messages": "Nema poruka",
+    "start_conversation": "Započni razgovor!",
+    "send_message_placeholder": "Upiši poruku...",
+    "game_over": "Igra je završila"
+  },
+  "playerlist": {
+    "players": "Igrači",
+    "points": "{{count}} bodova",
+    "connected": "Povezan",
+    "not_connected": "Nije povezan",
+    "position": "#{{position}}"
+  },
+  "chat": {
+    "chat": "Razgovor",
+    "room": "Lobi: {{room}}",
+    "no_messages": "Nema poruka",
+    "start_conversation": "Započni razgovor!",
+    "send_message_placeholder": "Upiši poruku...",
+    "correct_guess_you": "Pogodio si riječ! 🎉",
+    "correct_guess_other": "{{name}} je pogodio riječ! 🎉",
+    "winner_only": "Pobjednici"
+  },
+  "infobar": {
+    "room": "Lobi: {{room}}",
+    "picking_word_you": "Odaberi riječ za crtanje",
+    "picking_word_other": "{{name}} odabire riječ za crtanje",
+    "drawing": "Crtate: <1>{{word}}</1>",
+    "game_over": "Igra je završila"
+  },
+  "canvas_overlay": {
+    "pick_word_title": "Odaberi riječ za crtanje",
+    "pick_word_subtitle": "Klikni na jednu od ponuđenih riječi",
+    "round_end_title": "Kraj runde",
+    "round_end_subtitle": "Bodovi u ovoj rundi",
+    "best_in_round": "Najbolji u rundi"
+  }
+}

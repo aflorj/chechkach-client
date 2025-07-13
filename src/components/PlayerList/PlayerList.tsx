@@ -2,9 +2,11 @@ import { useContext, useEffect } from 'react';
 import { LobbyContext } from '../../providers/LobbyProvider';
 import clsx from 'clsx';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 
 export default function PlayerList() {
   const { users, drawingUser, roundWinners } = useContext(LobbyContext);
+  const { t } = useTranslation();
 
   useEffect(() => {
     console.log('users ', users);
@@ -32,7 +34,7 @@ export default function PlayerList() {
               d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
             />
           </svg>
-          Igralci ({users?.length || 0})
+          {t('playerlist.players', 'Players')} ({users?.length || 0})
         </h2>
 
         <div className="space-y-3">
@@ -122,7 +124,10 @@ export default function PlayerList() {
                     </div>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-sm text-gray-600">
-                        {user?.score || 0} točk
+                        {t('playerlist.points', {
+                          count: user?.score || 0,
+                          defaultValue: `${user?.score || 0} points`,
+                        })}
                       </span>
                       <div
                         className={clsx(
@@ -131,7 +136,12 @@ export default function PlayerList() {
                         )}
                       />
                       <span className="text-xs text-gray-500">
-                        {user.connected ? 'Povezan' : 'Ni povezan'}
+                        {t(
+                          user.connected
+                            ? 'playerlist.connected'
+                            : 'playerlist.not_connected',
+                          user.connected ? 'Connected' : 'Not connected'
+                        )}
                       </span>
                     </div>
                   </div>
@@ -140,7 +150,10 @@ export default function PlayerList() {
                   <div className="flex-shrink-0">
                     <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
                       <span className="text-xs font-medium text-gray-600">
-                        #{index + 1}
+                        {t('playerlist.position', {
+                          position: index + 1,
+                          defaultValue: `#${index + 1}`,
+                        })}
                       </span>
                     </div>
                   </div>

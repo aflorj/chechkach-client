@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { LobbyContext } from '../../providers/LobbyProvider';
 import CountDown from '../CountDown/CountDown';
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 
 export default function InfoBar({
   lobbyName,
@@ -18,6 +19,8 @@ export default function InfoBar({
     roundEndTimeStamp,
   } = useContext(LobbyContext);
 
+  const { t } = useTranslation();
+
   const getInfoBarMessage = () => {
     switch (lobbyStatus) {
       case 'pickingWord':
@@ -26,8 +29,11 @@ export default function InfoBar({
             <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
             <p className="text-gray-700">
               {stateUsername === drawingUser
-                ? 'Izberi besedo za risanje'
-                : `${drawingUser} izbira besedo za risanje`}
+                ? t('infobar.picking_word_you', 'Pick a word to draw')
+                : t('infobar.picking_word_other', {
+                    name: drawingUser,
+                    defaultValue: `${drawingUser} is picking a word to draw`,
+                  })}
             </p>
           </div>
         );
@@ -36,7 +42,7 @@ export default function InfoBar({
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             <span className="text-gray-700">
-              Rišeš:{' '}
+              {t('infobar.drawing', 'You are drawing: ')}
               <span className="font-semibold text-blue-600">{wordToDraw}</span>
             </span>
           </div>
@@ -110,7 +116,9 @@ export default function InfoBar({
         return (
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-red-500 rounded-full" />
-            <span className="text-gray-700 font-semibold">Igra končana</span>
+            <span className="text-gray-700 font-semibold">
+              {t('infobar.game_over', 'Game over')}
+            </span>
           </div>
         );
     }

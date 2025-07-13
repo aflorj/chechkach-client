@@ -3,6 +3,7 @@ import { DrawingBoardContext } from '../../providers/DrawingBoardProvider';
 import { motion } from 'motion/react';
 import Button from '../Button/Button';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 
 export default function Palette() {
   const {
@@ -15,6 +16,8 @@ export default function Palette() {
     activeTool,
     brushSize,
   } = useContext(DrawingBoardContext);
+
+  const { t } = useTranslation();
 
   const colorOptions = [
     {
@@ -149,7 +152,7 @@ export default function Palette() {
           onClick={() => undo!()}
           disabled={!canUndo}
           className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-md disabled:from-gray-300 disabled:to-gray-400 disabled:text-gray-400 disabled:cursor-not-allowed transition-all duration-200"
-          title="Razveljavi (Undo)"
+          title={t('palette.undo', 'Undo')}
         >
           <svg
             className="w-4 h-4"
@@ -180,13 +183,15 @@ export default function Palette() {
               d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"
             />
           </svg>
-          Paleta orodij
+          {t('palette.palette_title', 'Tool palette')}
         </h3>
 
         <div className="space-y-3">
           {/* Color Palette - More Compact Grid */}
           <div>
-            <h4 className="text-sm font-medium text-gray-700 mb-1.5">Barve</h4>
+            <h4 className="text-sm font-medium text-gray-700 mb-1.5">
+              {t('palette.colors', 'Colors')}
+            </h4>
             <div className="grid grid-cols-9 sm:grid-cols-12 lg:grid-cols-18 gap-1">
               {colorOptions.map((colorOption) => (
                 <motion.div
@@ -223,7 +228,9 @@ export default function Palette() {
           <div className="grid grid-cols-2 gap-3">
             {/* Brush Sizes */}
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2">Čopič</h4>
+              <h4 className="text-sm font-medium text-gray-700 mb-2">
+                {t('palette.brush', 'Brush')}
+              </h4>
               <div className="flex gap-1">
                 {sizeOptions.map((sizeOption) => (
                   <motion.button
@@ -248,7 +255,14 @@ export default function Palette() {
                         height: Math.min(sizeOption.size * 1.5, 16),
                       }}
                     />
-                    <span className="hidden sm:inline">{sizeOption.label}</span>
+                    <span className="hidden sm:inline">
+                      {t(
+                        `palette.brush_sizes.${sizeOption.label
+                          .toLowerCase()
+                          .replace(/ /g, '_')}`,
+                        sizeOption.label
+                      )}
+                    </span>
                   </motion.button>
                 ))}
               </div>
@@ -256,7 +270,9 @@ export default function Palette() {
 
             {/* Tools */}
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2">Orodja</h4>
+              <h4 className="text-sm font-medium text-gray-700 mb-2">
+                {t('palette.tools', 'Tools')}
+              </h4>
               <div className="flex gap-1">
                 {tools.map((tool) => (
                   <motion.button
@@ -272,7 +288,9 @@ export default function Palette() {
                     onClick={() => setActiveTool!(tool.name)}
                   >
                     <span className="text-sm">{tool.icon}</span>
-                    <span className="hidden sm:inline">{tool.label}</span>
+                    <span className="hidden sm:inline">
+                      {t(`palette.${tool.name}`, tool.label)}
+                    </span>
                   </motion.button>
                 ))}
               </div>

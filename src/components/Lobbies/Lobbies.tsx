@@ -5,8 +5,11 @@ import Button from '../Button/Button';
 import { motion, AnimatePresence } from 'motion/react';
 import { LobbiesApi } from '@aflorj/chechkach-openapi-ts-client';
 import { configuration } from '../../apiConfiguration';
+import { useTranslation } from 'react-i18next';
 
 export default function Lobbies() {
+  const { t, i18n } = useTranslation();
+
   const lobbiesApi = new LobbiesApi(configuration);
   const navigate = useNavigate();
 
@@ -14,6 +17,10 @@ export default function Lobbies() {
   const [lobbies, setLobbies] = useState<any>();
   const [lobbyName, setLobbyName] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
 
   const fetchLobbies = () => {
     lobbiesApi
@@ -71,10 +78,13 @@ export default function Lobbies() {
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="text-center sm:text-left">
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Pridruži se igri
+                  {t('lobbies.join_the_game', 'Join the game!')}
                 </h1>
                 <p className="text-gray-600 mt-2">
-                  Najdi obstoječo igro ali ustvari novo
+                  {t(
+                    'lobbies.find_or_create',
+                    'Find an existing game or create a new one'
+                  )}
                 </p>
               </div>
               <motion.div
@@ -101,7 +111,7 @@ export default function Lobbies() {
                         d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                       />
                     </svg>
-                    Osveži
+                    {t('lobbies.refresh', 'Refresh')}
                   </div>
                 </Button>
               </motion.div>
@@ -133,7 +143,7 @@ export default function Lobbies() {
                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                   />
                 </svg>
-                Razpoložljive igre
+                {t('lobbies.available_games', 'Available games')}
               </h2>
 
               {isLoading ? (
@@ -186,10 +196,13 @@ export default function Lobbies() {
                     </svg>
                   </div>
                   <p className="text-gray-500 text-lg">
-                    Na voljo ni nobene igre
+                    {t('lobbies.no_games', 'No games available')}
                   </p>
                   <p className="text-gray-400 text-sm mt-1">
-                    Ustvari prvo igro spodaj!
+                    {t(
+                      'lobbies.create_first_game',
+                      'Create the first game below!'
+                    )}
                   </p>
                 </motion.div>
               )}
@@ -218,7 +231,7 @@ export default function Lobbies() {
                     d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                   />
                 </svg>
-                Ustvari novo igro
+                {t('lobbies.create_new_game', 'Create new game')}
               </h2>
 
               <div className="space-y-4">
@@ -243,7 +256,7 @@ export default function Lobbies() {
                     transition={{ duration: 0.2 }}
                     className="absolute left-4 top-4 text-gray-500 bg-white/80 backdrop-blur-sm px-2 pointer-events-none"
                   >
-                    Ime sobe
+                    {t('lobbies.room_name', 'Room name')}
                   </motion.label>
                 </div>
 
@@ -271,7 +284,7 @@ export default function Lobbies() {
                           d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                         />
                       </svg>
-                      Ustvari igro
+                      {t('lobbies.create_game', 'Create game')}
                     </div>
                   </Button>
                 </motion.div>

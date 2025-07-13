@@ -1,0 +1,88 @@
+{
+  "landing": {
+    "draw_avatar": "Avatarını çiz",
+    "undo": "Geri al",
+    "tools": "Araçlar",
+    "brush": "Fırça",
+    "bucket": "Doldur",
+    "colors": "Renkler",
+    "brush_sizes": {
+      "thin": "İnce",
+      "medium": "Orta",
+      "thick": "Kalın",
+      "extra_thick": "Çok kalın"
+    },
+    "username_label": "Kullanıcı adı",
+    "username_placeholder": "Adınızı girin...",
+    "username_required": "Bu alan zorunludur",
+    "show_lobbies": "Lobileri göster"
+  },
+  "palette": {
+    "palette_title": "Araç paleti",
+    "undo": "Geri al",
+    "colors": "Renkler",
+    "brush": "Fırça",
+    "tools": "Araçlar",
+    "bucket": "Doldur",
+    "brush_sizes": {
+      "thin": "İnce",
+      "medium": "Orta",
+      "thick": "Kalın",
+      "extra_thick": "Çok kalın"
+    }
+  },
+  "lobbies": {
+    "join_the_game": "Lobiye katıl!",
+    "find_or_create": "Mevcut bir lobiyi bul veya yeni bir tane oluştur",
+    "refresh": "Yenile",
+    "available_games": "Mevcut lobiler",
+    "no_games": "Hiç lobi yok",
+    "create_first_game": "İlk lobiyi aşağıdan oluştur!",
+    "create_new_game": "Yeni lobi oluştur",
+    "room_name": "Lobi adı",
+    "create_game": "Lobi oluştur"
+  },
+  "lobby": {
+    "connected": "Bağlandı",
+    "not_connected": "Bağlı değil",
+    "players": "Oyuncular",
+    "start_game": "Turu başlat",
+    "starting": "Başlatılıyor...",
+    "chat": "Sohbet",
+    "no_messages": "Mesaj yok",
+    "start_conversation": "Sohbete başla!",
+    "send_message_placeholder": "Bir mesaj yaz...",
+    "game_over": "Oyun bitti"
+  },
+  "playerlist": {
+    "players": "Oyuncular",
+    "points": "{{count}} puan",
+    "connected": "Bağlandı",
+    "not_connected": "Bağlı değil",
+    "position": "#{{position}}"
+  },
+  "chat": {
+    "chat": "Sohbet",
+    "room": "Lobi: {{room}}",
+    "no_messages": "Mesaj yok",
+    "start_conversation": "Sohbete başla!",
+    "send_message_placeholder": "Bir mesaj yaz...",
+    "correct_guess_you": "Kelimeyi bildin! 🎉",
+    "correct_guess_other": "{{name}} kelimeyi bildi! 🎉",
+    "winner_only": "Kazananlar"
+  },
+  "infobar": {
+    "room": "Lobi: {{room}}",
+    "picking_word_you": "Çizmek için bir kelime seç",
+    "picking_word_other": "{{name}} çizmek için bir kelime seçiyor",
+    "drawing": "Çiziyorsun: <1>{{word}}</1>",
+    "game_over": "Oyun bitti"
+  },
+  "canvas_overlay": {
+    "pick_word_title": "Çizmek için bir kelime seç",
+    "pick_word_subtitle": "Sunulan kelimelerden birine tıkla",
+    "round_end_title": "Tur sonu",
+    "round_end_subtitle": "Bu turdaki puanlar",
+    "best_in_round": "Turun en iyisi"
+  }
+}

@@ -2,12 +2,14 @@ import { useContext } from 'react';
 import { LobbyContext } from '../../providers/LobbyProvider';
 import clsx from 'clsx';
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 
 type IMessageProps = any;
 
 export default function Message({ msgObj }: IMessageProps) {
   console.log('obj: ', msgObj);
   const { stateUsername } = useContext(LobbyContext);
+  const { t } = useTranslation();
 
   const buildServerMessage = (msg: any) => {
     if (msg.type === 'correctGuess') {
@@ -20,7 +22,7 @@ export default function Message({ msgObj }: IMessageProps) {
           >
             <div className="w-2 h-2 bg-green-500 rounded-full" />
             <div className="text-green-700 font-medium">
-              Uganil si besedo! 🎉
+              {t('chat.correct_guess_you', 'You guessed the word! 🎉')}
             </div>
           </motion.div>
         );
@@ -33,8 +35,11 @@ export default function Message({ msgObj }: IMessageProps) {
           >
             <div className="w-2 h-2 bg-green-500 rounded-full" />
             <div className="text-green-700">
-              <span className="font-semibold">{msg?.content}</span> je uganil
-              besedo! 🎉
+              <span className="font-semibold">{msg?.content}</span>{' '}
+              {t('chat.correct_guess_other', {
+                name: msg?.content,
+                defaultValue: `${msg?.content} guessed the word! 🎉`,
+              })}
             </div>
           </motion.div>
         );
@@ -102,7 +107,7 @@ export default function Message({ msgObj }: IMessageProps) {
             </span>
             {isWinnersOnly && (
               <span className="text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded-full">
-                Zmagovalci
+                {t('chat.winner_only', 'Winners')}
               </span>
             )}
           </div>

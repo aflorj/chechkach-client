@@ -1,0 +1,88 @@
+{
+  "landing": {
+    "draw_avatar": "Draw your avatar",
+    "undo": "Undo",
+    "tools": "Tools",
+    "brush": "Brush",
+    "bucket": "Fill",
+    "colors": "Colors",
+    "brush_sizes": {
+      "thin": "Thin",
+      "medium": "Medium",
+      "thick": "Thick",
+      "extra_thick": "Extra thick"
+    },
+    "username_label": "Username",
+    "username_placeholder": "Enter your name...",
+    "username_required": "This field is required",
+    "show_lobbies": "Show lobbies"
+  },
+  "palette": {
+    "palette_title": "Tool palette",
+    "undo": "Undo",
+    "colors": "Colors",
+    "brush": "Brush",
+    "tools": "Tools",
+    "bucket": "Fill",
+    "brush_sizes": {
+      "thin": "Thin",
+      "medium": "Medium",
+      "thick": "Thick",
+      "extra_thick": "Extra thick"
+    }
+  },
+  "lobbies": {
+    "join_the_game": "Join the lobby!",
+    "find_or_create": "Find an existing lobby or create a new one",
+    "refresh": "Refresh",
+    "available_games": "Available lobbies",
+    "no_games": "No lobbies available",
+    "create_first_game": "Create the first lobby below!",
+    "create_new_game": "Create new lobby",
+    "room_name": "Lobby name",
+    "create_game": "Create lobby"
+  },
+  "lobby": {
+    "connected": "Connected",
+    "not_connected": "Not connected",
+    "players": "Players",
+    "start_game": "Start round",
+    "starting": "Starting...",
+    "chat": "Chat",
+    "no_messages": "No messages",
+    "start_conversation": "Start the conversation!",
+    "send_message_placeholder": "Type a message...",
+    "game_over": "Game over"
+  },
+  "playerlist": {
+    "players": "Players",
+    "points": "{{count}} points",
+    "connected": "Connected",
+    "not_connected": "Not connected",
+    "position": "#{{position}}"
+  },
+  "chat": {
+    "chat": "Chat",
+    "room": "Lobby: {{room}}",
+    "no_messages": "No messages",
+    "start_conversation": "Start the conversation!",
+    "send_message_placeholder": "Type a message...",
+    "correct_guess_you": "You guessed the word! 🎉",
+    "correct_guess_other": "{{name}} guessed the word! 🎉",
+    "winner_only": "Winners"
+  },
+  "infobar": {
+    "room": "Lobby: {{room}}",
+    "picking_word_you": "Pick a word to draw",
+    "picking_word_other": "{{name}} is picking a word to draw",
+    "drawing": "You are drawing: <1>{{word}}</1>",
+    "game_over": "Game over"
+  },
+  "canvas_overlay": {
+    "pick_word_title": "Pick a word to draw",
+    "pick_word_subtitle": "Click one of the offered words",
+    "round_end_title": "End of round",
+    "round_end_subtitle": "Points this round",
+    "best_in_round": "Best in round"
+  }
+}
