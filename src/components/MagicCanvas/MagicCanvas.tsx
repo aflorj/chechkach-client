@@ -4,6 +4,7 @@ import CanvasOverlay from '../CanvasOverlay/CanvasOverlay';
 import { LobbyContext } from '../../providers/LobbyProvider';
 import { motion } from 'motion/react';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 
 interface IMagicCanvasProps {
   lobbyName: string;
@@ -24,19 +25,21 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const { t } = useTranslation();
+
   // Brush size labels mapping
   const getBrushSizeLabel = (size: number) => {
     switch (size) {
       case 1:
-        return 'Tanek';
+        return t('palette.brush_sizes.thin', 'Thin');
       case 4:
-        return 'Srednji';
+        return t('palette.brush_sizes.medium', 'Medium');
       case 8:
-        return 'Debel';
+        return t('palette.brush_sizes.thick', 'Thick');
       case 16:
-        return 'Zelo debel';
+        return t('palette.brush_sizes.extra_thick', 'Extra thick');
       default:
-        return 'Srednji';
+        return t('palette.brush_sizes.medium', 'Medium');
     }
   };
 
@@ -106,7 +109,10 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-gray-300 rounded-full" />
-                <span>Čopič: {getBrushSizeLabel(brushSize || 4)}</span>
+                <span>
+                  {t('palette.brush', 'Brush')}:{' '}
+                  {getBrushSizeLabel(brushSize || 4)}
+                </span>
               </div>
             </div>
           )}

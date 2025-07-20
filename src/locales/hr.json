@@ -69,7 +69,9 @@
     "send_message_placeholder": "Upiši poruku...",
     "correct_guess_you": "Pogodio si riječ! 🎉",
     "correct_guess_other": "{{name}} je pogodio riječ! 🎉",
-    "winner_only": "Pobjednici"
+    "winner_only": "Pobjednici",
+    "joined_lobby": "{{name}} se pridružio lobiju",
+    "left_lobby": "{{name}} je napustio lobi"
   },
   "infobar": {
     "room": "Lobi: {{room}}",

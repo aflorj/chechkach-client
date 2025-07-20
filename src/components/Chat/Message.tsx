@@ -45,6 +45,43 @@ export default function Message({ msgObj }: IMessageProps) {
         );
       }
     } else if (msg.type === 'playerJoiningOrLeaving') {
+      // Expect msg.content to be something like 'x joined the lobby' or 'x left the lobby'
+      if (msg.content?.includes('joined the lobby')) {
+        const name = msg.content.split(' ')[0];
+        return (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex items-center gap-2 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl"
+          >
+            <div className="w-2 h-2 bg-yellow-500 rounded-full" />
+            <div className="text-yellow-700 text-sm">
+              {t('chat.joined_lobby', {
+                name,
+                defaultValue: `${name} joined the lobby`,
+              })}
+            </div>
+          </motion.div>
+        );
+      } else if (msg.content?.includes('left the lobby')) {
+        const name = msg.content.split(' ')[0];
+        return (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex items-center gap-2 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl"
+          >
+            <div className="w-2 h-2 bg-yellow-500 rounded-full" />
+            <div className="text-yellow-700 text-sm">
+              {t('chat.left_lobby', {
+                name,
+                defaultValue: `${name} left the lobby`,
+              })}
+            </div>
+          </motion.div>
+        );
+      }
+      // fallback
       return (
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}

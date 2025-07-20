@@ -69,7 +69,9 @@
     "send_message_placeholder": "Bir mesaj yaz...",
     "correct_guess_you": "Kelimeyi bildin! 🎉",
     "correct_guess_other": "{{name}} kelimeyi bildi! 🎉",
-    "winner_only": "Kazananlar"
+    "winner_only": "Kazananlar",
+    "joined_lobby": "{{name}} lobiye katıldı",
+    "left_lobby": "{{name}} lobiden ayrıldı"
   },
   "infobar": {
     "room": "Lobi: {{room}}",

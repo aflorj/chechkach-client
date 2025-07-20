@@ -69,7 +69,9 @@
     "send_message_placeholder": "Type a message...",
     "correct_guess_you": "You guessed the word! 🎉",
     "correct_guess_other": "{{name}} guessed the word! 🎉",
-    "winner_only": "Winners"
+    "winner_only": "Winners",
+    "joined_lobby": "{{name}} joined the lobby",
+    "left_lobby": "{{name}} left the lobby"
   },
   "infobar": {
     "room": "Lobby: {{room}}",
