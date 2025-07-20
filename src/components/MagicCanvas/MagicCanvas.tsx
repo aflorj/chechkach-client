@@ -18,6 +18,7 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
     handleMouseMove,
     setCtx,
     setLobbyName,
+    activeTool,
   } = useContext(DrawingBoardContext);
 
   const { wordOptions, roundScoreboard, allowedToDraw } =
@@ -58,6 +59,54 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
     setLobbyName!(lobbyName);
   }, [lobbyName]);
 
+  const handleTouchStart = (ev: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!handleMouseDown || !activeTool) return;
+    if (activeTool === 'bucket') {
+      const touch = ev.touches[0];
+      const rect = canvasRef.current!.getBoundingClientRect();
+      const fakeEvent = {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        preventDefault: () => {},
+      } as any;
+      handleMouseDown(fakeEvent);
+    } else {
+      const touch = ev.touches[0];
+      const rect = canvasRef.current!.getBoundingClientRect();
+      const fakeEvent = {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        preventDefault: () => {},
+      } as any;
+      handleMouseDown(fakeEvent);
+    }
+  };
+
+  const handleTouchMove = (ev: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!handleMouseMove) return;
+    const touch = ev.touches[0];
+    const rect = canvasRef.current!.getBoundingClientRect();
+    const fakeEvent = {
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+      preventDefault: () => {},
+    } as any;
+    handleMouseMove(fakeEvent);
+  };
+
+  const handleTouchEnd = (ev: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!handleMouseUp) return;
+    const touch = ev.changedTouches[0] || ev.touches[0];
+    if (!touch) return;
+    const rect = canvasRef.current!.getBoundingClientRect();
+    const fakeEvent = {
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+      preventDefault: () => {},
+    } as any;
+    handleMouseUp(fakeEvent);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -80,6 +129,9 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseMove={handleMouseMove}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
             style={{
               background:
                 'linear-gradient(45deg, #f8fafc 25%, transparent 25%), linear-gradient(-45deg, #f8fafc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8fafc 75%), linear-gradient(-45deg, transparent 75%, #f8fafc 75%)',

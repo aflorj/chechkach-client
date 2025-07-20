@@ -240,6 +240,155 @@ export default function Landing() {
     draw({ x, y, color, brushSize, isEnding: true });
   };
 
+  const handleTouchStart = (ev: React.TouchEvent<HTMLCanvasElement>) => {
+    if (ev.touches.length !== 1) return;
+    setIsDrawing(true);
+    const canvas = avatarCanvasRef.current;
+    const ctx = ctxRef.current;
+    if (activeTool === 'bucket') {
+      saveToHistory();
+      if (!ctx || !canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const touch = ev.touches[0];
+      const startX = Math.floor((touch.clientX - rect.left) * scaleX);
+      const startY = Math.floor((touch.clientY - rect.top) * scaleY);
+      if (
+        startX < 0 ||
+        startX >= ctx.canvas.width ||
+        startY < 0 ||
+        startY >= ctx.canvas.height
+      ) {
+        return;
+      }
+      let colorLayer = ctx.getImageData(
+        0,
+        0,
+        ctx.canvas.width,
+        ctx.canvas.height
+      );
+      let startPos = (startY * ctx.canvas.width + startX) * 4;
+      let startR = colorLayer.data[startPos];
+      let startG = colorLayer.data[startPos + 1];
+      let startB = colorLayer.data[startPos + 2];
+      let activeColorRGB = hexToRgb(color);
+      if (
+        startR === activeColorRGB.r &&
+        startG === activeColorRGB.g &&
+        startB === activeColorRGB.b
+      ) {
+        return;
+      }
+      let pixelStack = [[startX, startY]];
+      while (pixelStack.length) {
+        const canvasWidth = ctx.canvas.width;
+        const canvasHeight = ctx.canvas.height;
+        var newPos, x, y, pixelPos, reachLeft, reachRight;
+        newPos = pixelStack.pop();
+        if (!newPos) continue;
+        x = newPos[0];
+        y = newPos[1];
+        if (x < 0 || x >= canvasWidth || y < 0 || y >= canvasHeight) {
+          continue;
+        }
+        pixelPos = (y * canvasWidth + x) * 4;
+        while (y-- >= 0 && matchStartColor(pixelPos)) {
+          pixelPos -= canvasWidth * 4;
+        }
+        pixelPos += canvasWidth * 4;
+        ++y;
+        reachLeft = false;
+        reachRight = false;
+        while (y++ < canvasHeight - 1 && matchStartColor(pixelPos)) {
+          colorPixel(pixelPos);
+          if (x > 0) {
+            if (matchStartColor(pixelPos - 4)) {
+              if (!reachLeft) {
+                pixelStack.push([x - 1, y]);
+                reachLeft = true;
+              }
+            } else if (reachLeft) {
+              reachLeft = false;
+            }
+          }
+          if (x < canvasWidth - 1) {
+            if (matchStartColor(pixelPos + 4)) {
+              if (!reachRight) {
+                pixelStack.push([x + 1, y]);
+                reachRight = true;
+              }
+            } else if (reachRight) {
+              reachRight = false;
+            }
+          }
+          pixelPos += canvasWidth * 4;
+        }
+      }
+      ctx.putImageData(colorLayer, 0, 0);
+      function matchStartColor(pixelPos: number) {
+        if (pixelPos < 0 || pixelPos >= colorLayer.data.length - 3) {
+          return false;
+        }
+        var r = colorLayer.data[pixelPos];
+        var g = colorLayer.data[pixelPos + 1];
+        var b = colorLayer.data[pixelPos + 2];
+        return r === startR && g === startG && b === startB;
+      }
+      function colorPixel(pixelPos: number) {
+        if (pixelPos < 0 || pixelPos >= colorLayer.data.length - 3) {
+          return;
+        }
+        colorLayer.data[pixelPos] = activeColorRGB.r;
+        colorLayer.data[pixelPos + 1] = activeColorRGB.g;
+        colorLayer.data[pixelPos + 2] = activeColorRGB.b;
+        colorLayer.data[pixelPos + 3] = 255;
+      }
+    } else if (ctx && canvas) {
+      saveToHistory();
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const touch = ev.touches[0];
+      const x = (touch.clientX - rect.left) * scaleX;
+      const y = (touch.clientY - rect.top) * scaleY;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      draw({ x, y, color, brushSize, isEnding: false });
+    }
+  };
+
+  const handleTouchMove = (ev: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) return;
+    const canvas = avatarCanvasRef.current;
+    const ctx = ctxRef.current;
+    if (!ctx || !canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const touch = ev.touches[0];
+    const x = (touch.clientX - rect.left) * scaleX;
+    const y = (touch.clientY - rect.top) * scaleY;
+    draw({ x, y, color, brushSize, isEnding: false });
+  };
+
+  const handleTouchEnd = (ev: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) return;
+    setIsDrawing(false);
+    const canvas = avatarCanvasRef.current;
+    const ctx = ctxRef.current;
+    if (!ctx || !canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    // Use the last touch point if available, otherwise fallback
+    const touch = ev.changedTouches[0] || ev.touches[0];
+    if (!touch) return;
+    const x = (touch.clientX - rect.left) * scaleX;
+    const y = (touch.clientY - rect.top) * scaleY;
+    draw({ x, y, color, brushSize, isEnding: true });
+  };
+
   const handleColorChange = (newHexColor: string): void => {
     setColor(newHexColor);
   };
@@ -315,6 +464,9 @@ export default function Landing() {
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}
                 onMouseMove={handleMouseMove}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
                 style={{ touchAction: 'none' }}
               ></canvas>
             </div>
