@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { LobbyContext } from '../../providers/LobbyProvider';
 import CountDown from '../CountDown/CountDown';
 import { motion } from 'motion/react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 
 export default function InfoBar({
   lobbyName,
@@ -42,8 +42,11 @@ export default function InfoBar({
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             <span className="text-gray-700">
-              {t('infobar.drawing', 'You are drawing: ')}
-              <span className="font-semibold text-blue-600">{wordToDraw}</span>
+              <Trans
+                i18nKey="infobar.drawing"
+                values={{ word: wordToDraw }}
+                components={[<span className="font-semibold text-blue-600" />]}
+              />
             </span>
           </div>
         ) : (

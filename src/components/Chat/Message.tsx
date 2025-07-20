@@ -44,6 +44,19 @@ export default function Message({ msgObj }: IMessageProps) {
           </motion.div>
         );
       }
+    } else if (msg.type === 'closeGuess') {
+      return (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex items-center gap-2 p-3 bg-gradient-to-r from-yellow-100 to-orange-100 border border-yellow-300 rounded-xl"
+        >
+          <div className="w-2 h-2 bg-yellow-400 rounded-full" />
+          <div className="text-yellow-800 font-medium">
+            {t('chat.close_guess', 'So close!')}
+          </div>
+        </motion.div>
+      );
     } else if (msg.type === 'playerJoiningOrLeaving') {
       // Expect msg.content to be something like 'x joined the lobby' or 'x left the lobby'
       if (msg.content?.includes('joined the lobby')) {

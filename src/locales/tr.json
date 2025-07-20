@@ -71,13 +71,14 @@
     "correct_guess_other": "{{name}} kelimeyi bildi! 🎉",
     "winner_only": "Kazananlar",
     "joined_lobby": "{{name}} lobiye katıldı",
-    "left_lobby": "{{name}} lobiden ayrıldı"
+    "left_lobby": "{{name}} lobiden ayrıldı",
+    "close_guess": "Neredeyse!"
   },
   "infobar": {
     "room": "Lobi: {{room}}",
     "picking_word_you": "Çizmek için bir kelime seç",
     "picking_word_other": "{{name}} çizmek için bir kelime seçiyor",
-    "drawing": "Çiziyorsun: <1>{{word}}</1>",
+    "drawing": "Çiziyorsun: <0>{{word}}</0>",
     "game_over": "Oyun bitti"
   },
   "canvas_overlay": {
@@ -86,5 +87,8 @@
     "round_end_title": "Tur sonu",
     "round_end_subtitle": "Bu turdaki puanlar",
     "best_in_round": "Turun en iyisi"
+  },
+  "magic_canvas": {
+    "drawing_area": "Çizim alanı"
   }
 }

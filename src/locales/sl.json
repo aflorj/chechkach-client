@@ -71,13 +71,14 @@
     "correct_guess_other": "{{name}} je uganil besedo! 🎉",
     "winner_only": "Zmagovalci",
     "joined_lobby": "{{name}} se je pridružil sobi",
-    "left_lobby": "{{name}} je zapustil sobo"
+    "left_lobby": "{{name}} je zapustil sobo",
+    "close_guess": "Skoraj!"
   },
   "infobar": {
     "room": "Soba: {{room}}",
     "picking_word_you": "Izberi besedo za risanje",
     "picking_word_other": "{{name}} izbira besedo za risanje",
-    "drawing": "Rišeš: <1>{{word}}</1>",
+    "drawing": "Rišeš: <0>{{word}}</0>",
     "game_over": "Igra končana"
   },
   "canvas_overlay": {
@@ -86,5 +87,8 @@
     "round_end_title": "Konec runde",
     "round_end_subtitle": "Točke v tej rundi",
     "best_in_round": "Najboljši v rundi"
+  },
+  "magic_canvas": {
+    "drawing_area": "Risalna površina"
   }
 }

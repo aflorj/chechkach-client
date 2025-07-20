@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import Button from '../Button/Button';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
+import { sizeOptions, colorOptions } from '../../constants/brushOptions';
 
 export default function Palette() {
   const {
@@ -18,106 +19,6 @@ export default function Palette() {
   } = useContext(DrawingBoardContext);
 
   const { t } = useTranslation();
-
-  const colorOptions = [
-    {
-      name: 'black',
-      hex: '#000000',
-      icon: '⬛',
-    },
-    {
-      name: 'white',
-      hex: '#FFFFFF',
-      icon: '⬜',
-    },
-    {
-      name: 'red',
-      hex: '#FF0000',
-      icon: '🔴',
-    },
-    {
-      name: 'dark red',
-      hex: '#8B0000',
-      icon: '🟥',
-    },
-    {
-      name: 'orange',
-      hex: '#FFA500',
-      icon: '🟠',
-    },
-    {
-      name: 'yellow',
-      hex: '#FFFF00',
-      icon: '🟡',
-    },
-    {
-      name: 'lime',
-      hex: '#32CD32',
-      icon: '🟢',
-    },
-    {
-      name: 'green',
-      hex: '#008000',
-      icon: '🟢',
-    },
-    {
-      name: 'dark green',
-      hex: '#006400',
-      icon: '🟢',
-    },
-    {
-      name: 'cyan',
-      hex: '#00FFFF',
-      icon: '🔵',
-    },
-    {
-      name: 'blue',
-      hex: '#0000FF',
-      icon: '🔵',
-    },
-    {
-      name: 'dark blue',
-      hex: '#00008B',
-      icon: '🔵',
-    },
-    {
-      name: 'purple',
-      hex: '#800080',
-      icon: '🟣',
-    },
-    {
-      name: 'magenta',
-      hex: '#FF00FF',
-      icon: '🟣',
-    },
-    {
-      name: 'pink',
-      hex: '#FFC0CB',
-      icon: '🩷',
-    },
-    {
-      name: 'brown',
-      hex: '#8B4513',
-      icon: '🟫',
-    },
-    {
-      name: 'gray',
-      hex: '#808080',
-      icon: '⬜',
-    },
-    {
-      name: 'light gray',
-      hex: '#D3D3D3',
-      icon: '⬜',
-    },
-  ];
-
-  const sizeOptions = [
-    { size: 1, label: 'Tanek' },
-    { size: 4, label: 'Srednji' },
-    { size: 8, label: 'Debel' },
-    { size: 16, label: 'Zelo debel' },
-  ];
 
   const tools = [
     {
@@ -257,9 +158,7 @@ export default function Palette() {
                     />
                     <span className="hidden sm:inline">
                       {t(
-                        `palette.brush_sizes.${sizeOption.label
-                          .toLowerCase()
-                          .replace(/ /g, '_')}`,
+                        `palette.brush_sizes.${sizeOption.label}`,
                         sizeOption.label
                       )}
                     </span>
