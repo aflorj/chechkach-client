@@ -260,8 +260,16 @@ export default function Landing() {
   };
 
   const onSubmit = (data: any) => {
-    localStorage.setItem('userName', data?.userName);
-    setStateUsername!(data?.userName);
+    if (
+      !data?.userName ||
+      typeof data.userName !== 'string' ||
+      !data.userName.trim()
+    ) {
+      // investigating ...
+      return;
+    }
+    localStorage.setItem('userName', data.userName.trim());
+    setStateUsername!(data.userName.trim());
     navigate('/lobbies');
   };
 
