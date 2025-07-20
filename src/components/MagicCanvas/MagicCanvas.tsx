@@ -1,4 +1,10 @@
-import { useContext, useEffect, useLayoutEffect, useRef } from 'react';
+import {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { DrawingBoardContext } from '../../providers/DrawingBoardProvider';
 import CanvasOverlay from '../CanvasOverlay/CanvasOverlay';
 import { LobbyContext } from '../../providers/LobbyProvider';
@@ -25,6 +31,7 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
     useContext(LobbyContext);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isTouchDrawing, setIsTouchDrawing] = useState(false);
 
   const { t } = useTranslation();
 
@@ -61,6 +68,7 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
 
   const handleTouchStart = (ev: React.TouchEvent<HTMLCanvasElement>) => {
     if (!handleMouseDown || !activeTool) return;
+    setIsTouchDrawing(true);
     if (activeTool === 'bucket') {
       const touch = ev.touches[0];
       const rect = canvasRef.current!.getBoundingClientRect();
@@ -83,7 +91,7 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
   };
 
   const handleTouchMove = (ev: React.TouchEvent<HTMLCanvasElement>) => {
-    if (!handleMouseMove) return;
+    if (!handleMouseMove || !isTouchDrawing) return;
     const touch = ev.touches[0];
     const rect = canvasRef.current!.getBoundingClientRect();
     const fakeEvent = {
@@ -96,6 +104,7 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
 
   const handleTouchEnd = (ev: React.TouchEvent<HTMLCanvasElement>) => {
     if (!handleMouseUp) return;
+    setIsTouchDrawing(false);
     const touch = ev.changedTouches[0] || ev.touches[0];
     if (!touch) return;
     const rect = canvasRef.current!.getBoundingClientRect();
