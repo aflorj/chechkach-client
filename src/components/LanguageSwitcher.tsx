@@ -11,7 +11,8 @@ const LANGUAGES = [
 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
-  const current = i18n.language;
+  // Use base language code for display and comparison
+  const current = i18n.language.split('-')[0];
   const [open, setOpen] = useState(false);
 
   return (

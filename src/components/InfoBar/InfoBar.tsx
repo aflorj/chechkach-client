@@ -152,7 +152,7 @@ export default function InfoBar({
                 />
               </svg>
               <span className="text-sm font-medium text-gray-600">
-                Soba: {lobbyName}
+                {t('infobar.room', 'Room')}: {lobbyName}
               </span>
             </div>
             {roundEndTimeStamp && (

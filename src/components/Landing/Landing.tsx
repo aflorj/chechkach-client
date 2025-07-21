@@ -77,9 +77,7 @@ export default function Landing() {
     ctxRef.current = ctx;
   }, []);
 
-  // Helper: Convert hex color to {r, g, b}
   function hexToRgb(hex: string) {
-    // Remove # if present
     hex = hex.replace(/^#/, '');
     if (hex.length === 3) {
       hex = hex
@@ -429,10 +427,8 @@ export default function Landing() {
     <div className="container h-screen pt-8 px-4 lg:px-0 mx-auto">
       <div className="w-full max-w-2xl mx-auto p-6">
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/30 px-8 py-8 flex flex-col gap-8 items-center">
-          {/* Avatar Drawing Section */}
           <div className="flex flex-col items-center gap-4 w-full">
             <div className="relative w-full flex flex-col items-center">
-              {/* Undo Button - Compact, Top Right */}
               <button
                 onClick={() => undo()}
                 disabled={!canUndo}
@@ -470,7 +466,6 @@ export default function Landing() {
                 style={{ touchAction: 'none' }}
               ></canvas>
             </div>
-            {/* Tool Selector */}
             <div className="w-full mt-2">
               <h4 className="text-sm font-medium text-gray-700 mb-1.5">
                 {t('landing.tools', 'Tools')}
@@ -506,7 +501,6 @@ export default function Landing() {
                 </button>
               </div>
             </div>
-            {/* Color Palette - Responsive Grid */}
             <div className="w-full">
               <h4 className="text-sm font-medium text-gray-700 mb-1.5">
                 {t('landing.colors', 'Colors')}
@@ -535,7 +529,6 @@ export default function Landing() {
                 ))}
               </div>
             </div>
-            {/* Brush Sizes - Compact Row */}
             <div className="w-full mt-2">
               <h4 className="text-sm font-medium text-gray-700 mb-1.5">
                 {t('landing.brush', 'Brush')}
@@ -571,7 +564,6 @@ export default function Landing() {
                 ))}
               </div>
             </div>
-            {/* Username Form Section - now stacked below everything */}
             <form
               onSubmit={handleSubmit(onSubmit, onError)}
               className="flex flex-col gap-6 w-full max-w-xs mt-6"

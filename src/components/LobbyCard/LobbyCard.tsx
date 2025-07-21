@@ -27,7 +27,7 @@ export default function LobbyCard({ lobby }: ILobbyCardProps) {
       })
       .then((res) => {
         setIsJoining(false);
-        console.log('join res: ', res);
+        // console.log('join res: ', res);
         navigate(`/lobby/${lobby?.name}`, {
           state: res?.data?.gameState,
         });

@@ -126,16 +126,12 @@ const DrawingBoardProvider = (props: DBPProps) => {
   };
 
   const draw = (ev: BoardEvent, isEnding = false) => {
+    const x = ev.clientX;
+    const y = ev.clientY;
     if (!ctx || !isDrawing || !allowedToDraw || lobbyStatus !== 'playing') {
       return;
     }
-
-    const rect = ctx.canvas.getBoundingClientRect();
-    const scaleX = ctx.canvas.width / rect.width;
-    const scaleY = ctx.canvas.height / rect.height;
-    const x = (ev.clientX - rect.left) * scaleX;
-    const y = (ev.clientY - rect.top) * scaleY;
-
+    // Use x and y directly
     const newLine = {
       x,
       y,

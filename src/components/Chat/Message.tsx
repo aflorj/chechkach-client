@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 type IMessageProps = any;
 
 export default function Message({ msgObj }: IMessageProps) {
-  console.log('obj: ', msgObj);
+  // console.log('obj: ', msgObj);
   const { stateUsername } = useContext(LobbyContext);
   const { t } = useTranslation();
 

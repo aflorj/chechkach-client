@@ -8,9 +8,9 @@ export default function PlayerList() {
   const { users, drawingUser, roundWinners } = useContext(LobbyContext);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    console.log('users ', users);
-  }, [users]);
+  // useEffect(() => {
+  //   console.log('users ', users);
+  // }, [users]);
 
   return (
     <motion.div

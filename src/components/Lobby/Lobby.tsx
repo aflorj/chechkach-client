@@ -50,7 +50,7 @@ export default function Lobby() {
   };
 
   const startGame = () => {
-    console.log('start game button click');
+    // console.log('start game button click');
     setIsStartingGame(true);
     socket.emit('startGame', {
       lobbyName: lobbyName,
@@ -72,20 +72,20 @@ export default function Lobby() {
 
       // we have connected - save our socket id to localStorage
       localStorage?.setItem('localSocketId', socket?.id);
-      console.log('PO: ', socket?.id);
+      // console.log('PO: ', socket?.id);
       setIsConnected(true);
     }
 
     function onConnectAttemptResponse({ response }: any) {
-      console.log('response tu: ', response);
+      // console.log('response tu: ', response);
       // DOING
 
       if (response?.allGood) {
-        console.log('all good');
+        // console.log('all good');
         setIsLoading(false);
       }
       if (response?.alreadyActive) {
-        console.log('you shouldnt be here');
+        // console.log('you shouldnt be here');
         navigate('/lobbies');
       }
     }
@@ -96,7 +96,7 @@ export default function Lobby() {
 
     // too general... replace with multiple specific events
     function onLobbyUpdate({ newLobbyState }: any) {
-      console.log('new lobby state: ', newLobbyState);
+      // console.log('new lobby state: ', newLobbyState);
       setLobbyInfo(newLobbyState);
     }
 
@@ -114,11 +114,11 @@ export default function Lobby() {
   }, []);
 
   const getLobbyInfo = () => {
-    console.log('gremo iskat lobbyinfo');
+    // console.log('gremo iskat lobbyinfo');
     lobbiesApi
       .findOne(lobbyName!)
       .then((res) => {
-        console.log('successfull getLobby fetch: ', res?.data);
+        // console.log('successfull getLobby fetch: ', res?.data);
         setLobbyInfo(res?.data);
         setLobbyStatus!(res?.data?.status);
       })

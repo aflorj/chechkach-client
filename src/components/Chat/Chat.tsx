@@ -35,7 +35,7 @@ export default function Chat({ lobbyName }: any) {
     }
   };
 
-  console.log('msg history: ', messageHistory);
+  // console.log('msg history: ', messageHistory);
 
   return (
     <motion.div

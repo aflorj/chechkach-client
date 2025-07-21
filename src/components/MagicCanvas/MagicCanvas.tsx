@@ -19,21 +19,24 @@ interface IMagicCanvasProps {
 export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
   const {
     brushSize,
-    handleMouseDown,
-    handleMouseUp,
-    handleMouseMove,
+    handleMouseDown: handleMouseDownCtx,
+    handleMouseUp: handleMouseUpCtx,
+    handleMouseMove: handleMouseMoveCtx,
     setCtx,
     setLobbyName,
     activeTool,
+    setIsDrawing,
   } = useContext(DrawingBoardContext);
 
   const { wordOptions, roundScoreboard, allowedToDraw } =
     useContext(LobbyContext);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isTouchDrawing, setIsTouchDrawing] = useState(false);
 
   const { t } = useTranslation();
+
+  const VIRTUAL_WIDTH = 700;
+  const VIRTUAL_HEIGHT = 500;
 
   // Brush size labels mapping
   const getBrushSizeLabel = (size: number) => {
@@ -51,70 +54,124 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
     }
   };
 
-  useLayoutEffect(() => {
-    const canvas = canvasRef.current as HTMLCanvasElement;
-    canvas.height = 500;
-    canvas.width = 700;
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    ctx.lineWidth = brushSize!;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    setCtx!(ctx);
-  }, []);
+  function getVirtualCoords(
+    clientX: number,
+    clientY: number
+  ): { x: number; y: number } {
+    const rect = canvasRef.current!.getBoundingClientRect();
+    const scaleX = VIRTUAL_WIDTH / rect.width;
+    const scaleY = VIRTUAL_HEIGHT / rect.height;
+    const x = (clientX - rect.left) * scaleX;
+    const y = (clientY - rect.top) * scaleY;
+    return { x, y };
+  }
+
+  const handleMouseDown = (
+    ev: React.MouseEvent<HTMLCanvasElement, MouseEvent>
+  ) => {
+    if (!handleMouseDownCtx || !activeTool) return;
+    const { x, y } = getVirtualCoords(ev.clientX, ev.clientY);
+    const fakeEvent = {
+      ...ev,
+      clientX: x,
+      clientY: y,
+      buttons: 1,
+      type: 'mousedown',
+    } as any;
+    handleMouseDownCtx(fakeEvent);
+  };
+  const handleMouseMove = (
+    ev: React.MouseEvent<HTMLCanvasElement, MouseEvent>
+  ) => {
+    if (!handleMouseMoveCtx) return;
+    if (ev.buttons !== 1) return;
+    const { x, y } = getVirtualCoords(ev.clientX, ev.clientY);
+    const fakeEvent = {
+      ...ev,
+      clientX: x,
+      clientY: y,
+      buttons: 1,
+      type: 'mousemove',
+    } as any;
+    handleMouseMoveCtx(fakeEvent);
+  };
+  const handleMouseUp = (
+    ev: React.MouseEvent<HTMLCanvasElement, MouseEvent>
+  ) => {
+    if (!handleMouseUpCtx) return;
+    const { x, y } = getVirtualCoords(ev.clientX, ev.clientY);
+    const fakeEvent = {
+      ...ev,
+      clientX: x,
+      clientY: y,
+      buttons: 0,
+      type: 'mouseup',
+    } as any;
+    handleMouseUpCtx(fakeEvent);
+  };
+
+  const handleTouchStart = (ev: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!handleMouseDownCtx || !activeTool) return;
+    if (setIsDrawing) setIsDrawing(true);
+    const touch = ev.touches[0];
+    const { x, y } = getVirtualCoords(touch.clientX, touch.clientY);
+    const fakeEvent = {
+      clientX: x,
+      clientY: y,
+      preventDefault: () => {},
+      buttons: 1,
+      type: 'mousedown',
+    } as any;
+    handleMouseDownCtx(fakeEvent);
+  };
+  const handleTouchMove = (ev: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!handleMouseMoveCtx) return;
+    const touch = ev.touches[0];
+    const { x, y } = getVirtualCoords(touch.clientX, touch.clientY);
+    const fakeEvent = {
+      clientX: x,
+      clientY: y,
+      preventDefault: () => {},
+      buttons: 1,
+      type: 'mousemove',
+    } as any;
+    handleMouseMoveCtx(fakeEvent);
+  };
+  const handleTouchEnd = (ev: React.TouchEvent<HTMLCanvasElement>) => {
+    if (!handleMouseUpCtx) return;
+    if (setIsDrawing) setIsDrawing(false);
+    const touch = ev.changedTouches[0] || ev.touches[0];
+    if (!touch) return;
+    const { x, y } = getVirtualCoords(touch.clientX, touch.clientY);
+    const fakeEvent = {
+      clientX: x,
+      clientY: y,
+      preventDefault: () => {},
+      buttons: 0,
+      type: 'mouseup',
+    } as any;
+    handleMouseUpCtx(fakeEvent);
+  };
 
   useEffect(() => {
     setLobbyName!(lobbyName);
   }, [lobbyName]);
 
-  const handleTouchStart = (ev: React.TouchEvent<HTMLCanvasElement>) => {
-    if (!handleMouseDown || !activeTool) return;
-    setIsTouchDrawing(true);
-    if (activeTool === 'bucket') {
-      const touch = ev.touches[0];
-      const rect = canvasRef.current!.getBoundingClientRect();
-      const fakeEvent = {
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-        preventDefault: () => {},
-      } as any;
-      handleMouseDown(fakeEvent);
-    } else {
-      const touch = ev.touches[0];
-      const rect = canvasRef.current!.getBoundingClientRect();
-      const fakeEvent = {
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-        preventDefault: () => {},
-      } as any;
-      handleMouseDown(fakeEvent);
-    }
-  };
-
-  const handleTouchMove = (ev: React.TouchEvent<HTMLCanvasElement>) => {
-    if (!handleMouseMove || !isTouchDrawing) return;
-    const touch = ev.touches[0];
-    const rect = canvasRef.current!.getBoundingClientRect();
-    const fakeEvent = {
-      clientX: touch.clientX,
-      clientY: touch.clientY,
-      preventDefault: () => {},
-    } as any;
-    handleMouseMove(fakeEvent);
-  };
-
-  const handleTouchEnd = (ev: React.TouchEvent<HTMLCanvasElement>) => {
-    if (!handleMouseUp) return;
-    setIsTouchDrawing(false);
-    const touch = ev.changedTouches[0] || ev.touches[0];
-    if (!touch) return;
-    const rect = canvasRef.current!.getBoundingClientRect();
-    const fakeEvent = {
-      clientX: touch.clientX,
-      clientY: touch.clientY,
-      preventDefault: () => {},
-    } as any;
-    handleMouseUp(fakeEvent);
-  };
+  useLayoutEffect(() => {
+    const canvas = canvasRef.current as HTMLCanvasElement;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = VIRTUAL_WIDTH * dpr;
+    canvas.height = VIRTUAL_HEIGHT * dpr;
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+    ctx.lineWidth = brushSize!;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    setCtx!(ctx);
+  }, []);
 
   return (
     <motion.div
@@ -129,27 +186,31 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
           'relative',
           wordOptions || roundScoreboard ? 'mb-4' : ''
         )}
+        style={{ width: '100%', maxWidth: 900, aspectRatio: '7 / 5' }}
       >
-        {/* Canvas Container */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-4">
           <canvas
             className="bg-white rounded-xl shadow-inner border border-gray-200 cursor-crosshair transition-all duration-300 hover:shadow-lg"
             ref={canvasRef}
+            width={VIRTUAL_WIDTH}
+            height={VIRTUAL_HEIGHT}
+            style={{
+              width: '100%',
+              height: '100%',
+              display: 'block',
+              background:
+                'linear-gradient(45deg, #f8fafc 25%, transparent 25%), linear-gradient(-45deg, #f8fafc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8fafc 75%), linear-gradient(-45deg, transparent 75%, #f8fafc 75%)',
+              backgroundSize: '20px 20px',
+              backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+            }}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseMove={handleMouseMove}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            style={{
-              background:
-                'linear-gradient(45deg, #f8fafc 25%, transparent 25%), linear-gradient(-45deg, #f8fafc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8fafc 75%), linear-gradient(-45deg, transparent 75%, #f8fafc 75%)',
-              backgroundSize: '20px 20px',
-              backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-            }}
           />
 
-          {/* Canvas Info - Only show for users who can draw */}
           {allowedToDraw && (
             <div className="mt-3 flex items-center justify-between text-sm text-gray-600">
               <div className="flex items-center gap-2">
@@ -179,7 +240,6 @@ export default function MagicCanvas({ lobbyName }: IMagicCanvasProps) {
           )}
         </div>
 
-        {/* Overlay for word options or scoreboard */}
         {(wordOptions || roundScoreboard) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}

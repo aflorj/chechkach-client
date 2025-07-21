@@ -27,7 +27,7 @@ export default function Lobbies() {
       .findAll()
       .then((res) => {
         setIsLoading(false);
-        console.log('lobbies:', res?.data);
+        // console.log('lobbies:', res?.data);
         setLobbies(res?.data);
       })
       .catch((err) => {
@@ -47,7 +47,7 @@ export default function Lobbies() {
         private: true,
       })
       .then((res) => {
-        console.log('createLobby response: ', res);
+        // console.log('createLobby response: ', res);
         navigate(`/lobby/${res?.data?.name}`);
       })
       .catch((err) => {

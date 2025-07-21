@@ -16,9 +16,9 @@ export default function CanvasOverlay({ lobbyName }: any) {
     });
   };
 
-  useEffect(() => {
-    console.log('map this: ', roundScoreboard);
-  }, [roundScoreboard]);
+  // useEffect(() => {
+  //   console.log('map this: ', roundScoreboard);
+  // }, [roundScoreboard]);
 
   // Find top score for highlighting
   const topScore =
